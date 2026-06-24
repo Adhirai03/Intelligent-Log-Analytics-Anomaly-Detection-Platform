@@ -1,0 +1,29 @@
+# Python environment and caches
+HDFS_v1/HDFS.log
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Data and large files (Never upload raw datasets or models to GitHub)
+data/
+raw_data/
+*.csv
+*.json
+*.parquet
+
+# Heavy ML Model checkpoints/weights
+models/
+*.pkl
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# Environment variables and secrets (API keys, database credentials)
+.env
