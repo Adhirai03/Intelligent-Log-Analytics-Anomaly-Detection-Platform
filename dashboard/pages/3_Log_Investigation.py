@@ -4,9 +4,7 @@ import joblib
 
 st.title("🔍 Log Investigation")
 
-df = pd.read_csv(
-    r"C:/Users/Ashika.Adhirai/Downloads/Intelligent Log Analytics & Anomaly Detection Platform/HDFS_v1/data/Event_occurrence_matrix.csv"
-)
+df = pd.read_csv("data/Event_occurrence_matrix.csv")
 
 model = joblib.load(
     "saved_models/random_forest.pkl"
