@@ -13,9 +13,7 @@ model = joblib.load(
     "saved_models/random_forest.pkl"
 )
 
-df = pd.read_csv(
-    "C:/Users/Ashika.Adhirai/Downloads/Intelligent Log Analytics & Anomaly Detection Platform/HDFS_v1/data/Event_occurrence_matrix.csv"
-)
+df = pd.read_csv("data/Event_occurrence_matrix.csv")
 
 features = [f"E{i}" for i in range(1,30)]
 
