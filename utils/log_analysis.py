@@ -1,10 +1,16 @@
 import pandas as pd
+from pathlib import Path
 
+ROOT_DIR = Path(__file__).resolve().parents[1]
 
 def load_data(filepath):
     """
     Load Event Occurrence Matrix dataset
     """
+    if isinstance(filepath, str):
+        # Handle relative paths by resolving from ROOT_DIR
+        if not filepath.startswith('/') and not ':' in filepath:
+            filepath = ROOT_DIR / filepath
     df = pd.read_csv(filepath)
     return df
 

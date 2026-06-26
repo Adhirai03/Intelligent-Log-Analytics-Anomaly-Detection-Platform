@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+from pathlib import Path
 
 from utils.log_analysis import (
     load_data,
@@ -9,13 +10,15 @@ from utils.log_analysis import (
     get_top_events
 )
 
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 st.title("📊 Log Overview")
 
 # --------------------------
 # Load Dataset
 # --------------------------
 
-df = load_data("data/Event_occurrence_matrix.csv")
+df = load_data(ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv")
 
 # --------------------------
 # Total Logs
