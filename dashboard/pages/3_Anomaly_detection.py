@@ -8,7 +8,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 st.title("🔍 Anomaly Detection")
 
 df = pd.read_csv(
-    ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv"
+    ROOT_DIR / "data" / "Event_occurrence_matrix.csv"
 )
 
 # Load model lazily after a Block ID is selected to avoid crashing the

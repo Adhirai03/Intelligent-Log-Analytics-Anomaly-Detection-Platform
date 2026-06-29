@@ -1,0 +1,14 @@
+/* Sleek File Uploader Box Customization */
+div[data-testid="stFileUploader"] {
+    background-color: #1E293B;
+    border: 1px dashed /*#38BDF8*/;
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+div[data-testid="stFileUploader"]:hover {
+    border-color: #00B4D8;
+    box-shadow: 2px 4px 12px rgba(0, 180, 216, 0.5);
+}
+
