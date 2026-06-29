@@ -18,7 +18,7 @@ st.title("📊 Log Overview")
 # Load Dataset
 # --------------------------
 
-df = load_data(ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv")
+df = load_data(ROOT_DIR/ "data" / "Event_occurrence_matrix.csv")
 
 # --------------------------
 # Total Logs
