@@ -7,7 +7,7 @@ from utils.preprocessing import load_data
 # -----------------------------
 # Load model
 # -----------------------------
-model = joblib.load("models/saved_models/random_forest.pkl")
+model = joblib.load("saved_models/random_forest.pkl")
 
 # -----------------------------
 # Load dataset

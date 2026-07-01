@@ -62,7 +62,7 @@ st.markdown("---")
 # Load Model
 # -------------------------
 model = joblib.load(
-    ROOT_DIR / "saved_models" / "random_forest.pkl"
+    ROOT_DIR /"saved_models" / "random_forest.pkl"
 )
 
 features = [f"E{i}" for i in range(1,30)]

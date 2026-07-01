@@ -14,15 +14,11 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 
 st.title("📊 Log Overview")
 
-# --------------------------
 # Load Dataset
-# --------------------------
 
 df = load_data(ROOT_DIR/ "data" / "Event_occurrence_matrix.csv")
 
-# --------------------------
 # Total Logs
-# --------------------------
 
 total_logs = get_total_logs(df)
 
@@ -31,9 +27,7 @@ st.metric(
     value=f"{total_logs:,}"
 )
 
-# --------------------------
 # Success vs Fail
-# --------------------------
 
 st.subheader("Success vs Fail Distribution")
 
@@ -50,9 +44,7 @@ st.plotly_chart(
     use_container_width=True
 )
 
-# --------------------------
 # Failure Types
-# --------------------------
 
 st.subheader("Failure Type Distribution")
 
@@ -73,9 +65,7 @@ st.plotly_chart(
     use_container_width=True
 )
 
-# --------------------------
 # Top Events
-# --------------------------
 
 st.subheader("Top Event Templates")
 
