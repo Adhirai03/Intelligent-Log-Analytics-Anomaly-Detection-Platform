@@ -4,25 +4,16 @@ import pandas as pd
 import plotly.express as px
 from utils.preprocessing import load_data
 
-# -----------------------------
 # Load model
-# -----------------------------
 model = joblib.load("saved_models/random_forest.pkl")
 
-# -----------------------------
 # Load dataset
-# -----------------------------
 X, y, df = load_data("data/Event_occurrence_matrix.csv")
 
-# -----------------------------
 # Create SHAP explainer
-# -----------------------------
 explainer = shap.TreeExplainer(model)
 
-
-# -----------------------------
 # Internal helper
-# -----------------------------
 def _get_single_row_shap(row):
 
     values = explainer.shap_values(row)
@@ -34,9 +25,7 @@ def _get_single_row_shap(row):
     # values.shape = (1, 29, 2)
     return values[0, :, 1]
 
-# -----------------------------
 # Top Features
-# -----------------------------
 def get_top_features(row_index=0, top_n=5):
 
     row = X.iloc[[row_index]]
@@ -55,10 +44,7 @@ def get_top_features(row_index=0, top_n=5):
 
     return importance.head(top_n)
 
-
-# -----------------------------
 # Plot
-# -----------------------------
 def feature_importance_plot(row_index=0):
 
     top = get_top_features(row_index)
@@ -78,10 +64,7 @@ def feature_importance_plot(row_index=0):
 
     return fig
 
-
-# -----------------------------
 # Explanation
-# -----------------------------
 def generate_explanation(row_index=0):
 
     top = get_top_features(row_index)
@@ -98,10 +81,7 @@ These event patterns differ from normal HDFS execution traces observed during
 training, making this execution appear suspicious.
 """.strip()
 
-
-# -----------------------------
 # Prediction
-# -----------------------------
 def predict_row(row_index=0):
 
     row = X.iloc[[row_index]]
@@ -110,10 +90,7 @@ def predict_row(row_index=0):
 
     return "Anomaly" if pred else "Normal"
 
-
-# -----------------------------
 # Confidence
-# -----------------------------
 def prediction_probability(row_index=0):
 
     row = X.iloc[[row_index]]
@@ -122,10 +99,7 @@ def prediction_probability(row_index=0):
 
     return round(max(prob) * 100, 2)
 
-
-# -----------------------------
 # Raw SHAP values
-# -----------------------------
 def get_shap_values(row_index=0):
 
     row = X.iloc[[row_index]]
