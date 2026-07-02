@@ -15,116 +15,115 @@ model = joblib.load(
     ROOT_DIR / "saved_models" / "random_forest.pkl"
 )
 
-df = pd.read_csv(ROOT_DIR / "data" / "Event_occurrence_matrix.csv")
+if st.session_state["uploaded_file"] is not None:
+    df = st.session_state["uploaded_file"]
 
-features = [f"E{i}" for i in range(1,30)]
+    features = [f"E{i}" for i in range(1,30)]
 
-X = df[features]
+    X = df[features]
 
+    # Random Forest Feature Importance
+    importance_df = pd.DataFrame({
+        "Feature": features,
+        "Importance": model.feature_importances_
+    })
 
-# Random Forest Feature Importance
+    importance_df = importance_df.sort_values(
+        by="Importance",
+        ascending=False
+    )
 
-importance_df = pd.DataFrame({
-    "Feature": features,
-    "Importance": model.feature_importances_
-})
+    st.subheader("Most Influential Events")
 
-importance_df = importance_df.sort_values(
-    by="Importance",
-    ascending=False
-)
+    st.dataframe(
+        importance_df,
+        use_container_width=True
+    )
 
-st.subheader("Most Influential Events")
+    fig = px.bar(
+        importance_df.head(10),
+        x="Feature",
+        y="Importance",
+        title="Top 10 Important Events"
+    )
 
-st.dataframe(
-    importance_df,
-    use_container_width=True
-)
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
-fig = px.bar(
-    importance_df.head(10),
-    x="Feature",
-    y="Importance",
-    title="Top 10 Important Events"
-)
-
-st.plotly_chart(
-    fig,
-    use_container_width=True
-)
-
-st.markdown("---")
-
-
-sample_X = X.sample(
-    1000,
-    random_state=42
-)
-
-with st.spinner("Calculating SHAP values..."):
-
-    explainer = shap.TreeExplainer(model)
-
-    shap_values = explainer.shap_values(sample_X)
-
-    # Your SHAP output shape:
-    # (1000, 29, 2)
-
-    anomaly_shap = shap_values[:, :, 1]
+    st.markdown("---")
 
 
-st.subheader("SHAP Summary Plot")
+    sample_X = X.sample(
+        1000,
+        random_state=42
+    )
 
-fig_shap, ax = plt.subplots(figsize=(10, 6))
+    with st.spinner("Calculating SHAP values..."):
 
-shap.summary_plot(
-    anomaly_shap,
-    sample_X,
-    show=False
-)
+        explainer = shap.TreeExplainer(model)
 
-st.pyplot(fig_shap)
+        shap_values = explainer.shap_values(sample_X)
 
+        # Your SHAP output shape:
+        # (1000, 29, 2)
 
-mean_shap = np.abs(
-    anomaly_shap
-).mean(axis=0)
-
-shap_df = pd.DataFrame({
-    "Feature": features,
-    "SHAP Importance": mean_shap
-})
-
-shap_df = shap_df.sort_values(
-    by="SHAP Importance",
-    ascending=False
-)
-
-st.subheader("Top SHAP Features")
-
-st.dataframe(
-    shap_df,
-    use_container_width=True
-)
+        anomaly_shap = shap_values[:, :, 1]
 
 
-fig_shap_bar = px.bar(
-    shap_df.head(10),
-    x="Feature",
-    y="SHAP Importance",
-    title="Top 10 SHAP Features"
-)
+    st.subheader("SHAP Summary Plot")
 
-st.plotly_chart(
-    fig_shap_bar,
-    use_container_width=True
-)
+    fig_shap, ax = plt.subplots(figsize=(10, 6))
 
-st.markdown("---")
+    shap.summary_plot(
+        anomaly_shap,
+        sample_X,
+        show=False
+    )
 
-"""
-Random Forest Feature Importance shows which events are globally important.
+    st.pyplot(fig_shap)
 
-SHAP explains how each event contributes to anomaly predictions,
-making the model more transparent and interpretable.
-"""
+    mean_shap = np.abs(
+        anomaly_shap
+    ).mean(axis=0)
+
+    shap_df = pd.DataFrame({
+        "Feature": features,
+        "SHAP Importance": mean_shap
+    })
+
+    shap_df = shap_df.sort_values(
+        by="SHAP Importance",
+        ascending=False
+    )
+
+    st.subheader("Top SHAP Features")
+
+    st.dataframe(
+        shap_df,
+        use_container_width=True
+    )
+
+    fig_shap_bar = px.bar(
+        shap_df.head(10),
+        x="Feature",
+        y="SHAP Importance",
+        title="Top 10 SHAP Features"
+    )
+
+    st.plotly_chart(
+        fig_shap_bar,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    """
+    Random Forest Feature Importance shows which events are globally important.
+
+    SHAP explains how each event contributes to anomaly predictions,
+    making the model more transparent and interpretable.
+    """
+else:
+    st.warning("⚠️ No data found. Please go to the **Home** page and upload a file first.   ")

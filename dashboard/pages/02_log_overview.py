@@ -16,74 +16,73 @@ st.title("📊 Log Overview")
 
 # Load Dataset
 
-df = load_data(ROOT_DIR/ "data" / "Event_occurrence_matrix.csv")
+if st.session_state["uploaded_file"] is not None:
+    df = st.session_state["uploaded_file"]
 
-# Total Logs
+    # Total Logs
+    total_logs = get_total_logs(df)
 
-total_logs = get_total_logs(df)
+    st.metric(
+        label="Total Log Traces",
+        value=f"{total_logs:,}"
+    )
 
-st.metric(
-    label="Total Log Traces",
-    value=f"{total_logs:,}"
-)
+    # Success vs Fail
+    st.subheader("Success vs Fail Distribution")
 
-# Success vs Fail
+    success_fail = get_success_fail_counts(df)
 
-st.subheader("Success vs Fail Distribution")
+    fig1 = px.pie(
+        values=success_fail.values,
+        names=success_fail.index,
+        title="Success vs Fail Logs"
+    )
 
-success_fail = get_success_fail_counts(df)
+    st.plotly_chart(
+        fig1,
+        use_container_width=True
+    )
 
-fig1 = px.pie(
-    values=success_fail.values,
-    names=success_fail.index,
-    title="Success vs Fail Logs"
-)
+    # Failure Types
+    st.subheader("Failure Type Distribution")
 
-st.plotly_chart(
-    fig1,
-    use_container_width=True
-)
+    failure_types = get_failure_type_distribution(df)
 
-# Failure Types
+    fig2 = px.bar(
+        x=failure_types.index,
+        y=failure_types.values,
+        labels={
+            "x": "Failure Type",
+            "y": "Count"
+        },
+        title="Failure Type Counts"
+    )
 
-st.subheader("Failure Type Distribution")
+    st.plotly_chart(
+        fig2,
+        use_container_width=True
+    )
 
-failure_types = get_failure_type_distribution(df)
+    # Top Events
+    st.subheader("Top Event Templates")
 
-fig2 = px.bar(
-    x=failure_types.index,
-    y=failure_types.values,
-    labels={
-        "x": "Failure Type",
-        "y": "Count"
-    },
-    title="Failure Type Counts"
-)
+    top_events = get_top_events(df)
 
-st.plotly_chart(
-    fig2,
-    use_container_width=True
-)
+    fig3 = px.bar(
+        x=top_events.index,
+        y=top_events.values,
+        labels={
+            "x": "Event",
+            "y": "Occurrences"
+        },
+        title="Most Frequent Events"
+    )
 
-# Top Events
+    st.plotly_chart(
+        fig3,
+        use_container_width=True
+    )
 
-st.subheader("Top Event Templates")
-
-top_events = get_top_events(df)
-
-fig3 = px.bar(
-    x=top_events.index,
-    y=top_events.values,
-    labels={
-        "x": "Event",
-        "y": "Occurrences"
-    },
-    title="Most Frequent Events"
-)
-
-st.plotly_chart(
-    fig3,
-    use_container_width=True
-)
-
-st.dataframe(top_events)
+    st.dataframe(top_events)
+else:
+    st.warning("⚠️ No data found. Please go to the **Home** page and upload a file first.   ")
