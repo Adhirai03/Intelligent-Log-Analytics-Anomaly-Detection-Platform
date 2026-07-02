@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.title("📊 Overview")
 
-if "uploaded_file" in st.session_state:
+if st.session_state["uploaded_file"] is not None:
     df = st.session_state["uploaded_file"]
 
     # df = pd.read_csv("data/Event_occurrence_matrix.csv")

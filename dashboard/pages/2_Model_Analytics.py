@@ -9,9 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 
 st.title("🤖 Model Analytics")
 
-# -------------------------
 # Metrics
-# -------------------------
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric("Accuracy", "99.99%")
@@ -21,9 +19,7 @@ col4.metric("F1 Score", "99.88%")
 
 st.markdown("---")
 
-# -------------------------
 # Confusion Matrix
-# -------------------------
 st.subheader("Confusion Matrix")
 
 cm = np.array([
@@ -58,9 +54,7 @@ st.info(
 
 st.markdown("---")
 
-# -------------------------
 # Load Model
-# -------------------------
 model = joblib.load(
     ROOT_DIR /"saved_models" / "random_forest.pkl"
 )
@@ -77,9 +71,7 @@ importance_df = importance_df.sort_values(
     ascending=False
 )
 
-# -------------------------
 # Top Important Events
-# -------------------------
 st.subheader("Top Important Events")
 
 fig_imp = px.bar(
@@ -91,9 +83,7 @@ fig_imp = px.bar(
 
 st.plotly_chart(fig_imp, use_container_width=True)
 
-# -------------------------
 # Top 5 Event Cards
-# -------------------------
 st.subheader("Most Influential Events")
 
 top5 = importance_df.head(5)
@@ -108,9 +98,7 @@ for idx, (_, row) in enumerate(top5.iterrows()):
 
 st.markdown("---")
 
-# -------------------------
 # Feature Table
-# -------------------------
 st.subheader("Feature Importance Table")
 
 st.dataframe(
@@ -120,9 +108,7 @@ st.dataframe(
 
 st.markdown("---")
 
-# -------------------------
 # Model Summary
-# -------------------------
 st.subheader("Model Insights")
 
 st.success(

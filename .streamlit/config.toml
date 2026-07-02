@@ -1,0 +1,15 @@
+[theme]
+# Primary accent color for sliders, active tabs, buttons, and radio inputs
+primaryColor = "#EF4444" 
+
+# Background color for the main content areas
+backgroundColor = "#010a20"
+
+# Background color for the sidebar and drop-down cards
+secondaryBackgroundColor = "#1A1F2C"
+
+# Main body text color
+textColor = "#F8FAFC"
+
+# Font family setting
+font = "sans serif"
