@@ -1,123 +1,46 @@
 import streamlit as st
-import plotly.express as px
-import numpy as np
-import pandas as pd
-import joblib
-from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+from dashboard.pages.Model_Analytics.Upload_Data import show_upload
+from dashboard.pages.Model_Analytics.Block_Analysis import show_block_analysis
+from dashboard.pages.Model_Analytics.Report_generator import show_report
 
-st.title("🤖 Model Analytics")
+st.header("🎯 Model Analytics Dashboard")
 
-# Metrics
-col1, col2, col3, col4 = st.columns(4)
+if "selected_block" not in st.session_state:
+    st.session_state.selected_block = None
+if "occurrence_row" not in st.session_state:
+    st.session_state.occurrence_row = None
+if "predicted_label" not in st.session_state:
+    st.session_state.predicted_label = None
+if "confidence" not in st.session_state:
+    st.session_state.confidence = None
+if "top10" not in st.session_state:
+    st.session_state.top10 = None
 
-col1.metric("Accuracy", "99.99%")
-col2.metric("Precision", "99.85%")
-col3.metric("Recall", "99.91%")
-col4.metric("F1 Score", "99.88%")
+# Initialize isolated Tab views
+tab1, tab2, tab3 = st.tabs(["📤 Upload", "📊 Block Analysis", "📄 Report"])
 
-st.markdown("---")
+with tab1:
+    show_upload()
 
-# Confusion Matrix
-st.subheader("Confusion Matrix")
+with tab2:
+    if "df" not in st.session_state:
+        st.warning("Please upload the dataset first.")
+    else:
+        show_block_analysis()
 
-cm = np.array([
-    [111640, 5],
-    [3, 3365]
-])
-
-fig_cm = px.imshow(
-    cm,
-    text_auto=True,
-    labels=dict(
-        x="Predicted Label",
-        y="Actual Label"
-    ),
-    x=["Normal", "Anomaly"],
-    y=["Normal", "Anomaly"]
-)
-
-st.plotly_chart(fig_cm, use_container_width=True)
-
-st.info(
-    """
-    True Negatives : 111640
-    
-    False Positives : 5
-    
-    False Negatives : 3
-    
-    True Positives : 3365
-    """
-)
-
-st.markdown("---")
-
-# Load Model
-model = joblib.load(
-    ROOT_DIR /"saved_models" / "random_forest.pkl"
-)
-
-features = [f"E{i}" for i in range(1,30)]
-
-importance_df = pd.DataFrame({
-    "Feature": features,
-    "Importance": model.feature_importances_
-})
-
-importance_df = importance_df.sort_values(
-    by="Importance",
-    ascending=False
-)
-
-# Top Important Events
-st.subheader("Top Important Events")
-
-fig_imp = px.bar(
-    importance_df.head(15),
-    x="Feature",
-    y="Importance",
-    title="Top 15 Most Important Events"
-)
-
-st.plotly_chart(fig_imp, use_container_width=True)
-
-# Top 5 Event Cards
-st.subheader("Most Influential Events")
-
-top5 = importance_df.head(5)
-
-cols = st.columns(5)
-
-for idx, (_, row) in enumerate(top5.iterrows()):
-    cols[idx].metric(
-        row["Feature"],
-        f"{row['Importance']:.4f}"
-    )
-
-st.markdown("---")
-
-# Feature Table
-st.subheader("Feature Importance Table")
-
-st.dataframe(
-    importance_df,
-    use_container_width=True
-)
-
-st.markdown("---")
-
-# Model Summary
-st.subheader("Model Insights")
-
-st.success(
-    f"""
-    Random Forest identified {importance_df.iloc[0]['Feature']}
-    as the most influential event contributing to anomaly detection.
-
-    The model demonstrates excellent performance with high
-    precision and recall, making it suitable for detecting
-    anomalous HDFS log patterns.
-    """
-)
+with tab3:
+    if st.session_state.get("selected_block") is None:
+        st.warning("Please select and analyze a block first.")
+    else:
+        st.subheader("📄 Generate Report")
+        if st.button("Generate Model Analytics Report"):
+            pdf_path = show_report(
+                selected_block=st.session_state.selected_block,
+                occurrence_row=st.session_state.occurrence_row,
+                predicted_label=st.session_state.predicted_label,
+                confidence=st.session_state.confidence,
+                top10=st.session_state.top10,
+            )
+            st.success(f"Report generated successfully: {pdf_path}")
+            st.write(f"[Download Report]({pdf_path})")
