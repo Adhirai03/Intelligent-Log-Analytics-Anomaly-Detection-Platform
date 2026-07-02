@@ -3,13 +3,13 @@ import pandas as pd
 import joblib
 from pathlib import Path
 
+from utils.log_analysis import load_data
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
 st.title("🔍 Anomaly Detection")
 
-df = pd.read_csv(
-    ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv"
-)
+df = load_data(ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv")
 
 # Load model lazily after a Block ID is selected to avoid crashing the
 # page if the model file is missing or corrupted.
@@ -25,6 +25,28 @@ block_options = (
     .astype(str)
     .unique()
 )
+
+block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
+
+if not block_ids:
+    st.error("No block IDs are available in the uploaded dataset.")
+    st.stop()
+
+search_query = st.text_input(
+    "Search Block ID",
+    value="",
+    placeholder="Type part of a Block ID",
+    help="Use this to quickly find a block when the list is large."
+)
+
+filtered_block_ids = [
+    block_id for block_id in block_ids
+    if search_query.lower() in block_id.lower()
+] if search_query else block_ids
+
+if not filtered_block_ids:
+    st.warning("No matching Block IDs found. Try a different search term.")
+    st.stop()
 
 selected_block = st.selectbox(
     "Choose a Block ID",
@@ -100,7 +122,7 @@ if not row.empty:
 
     st.dataframe(
         event_values.head(10),
-        use_container_width=True
+        width="stretch"
     )
 
     # Complete Pattern
@@ -108,7 +130,7 @@ if not row.empty:
 
     st.dataframe(
         row[features].T,
-        use_container_width=True
+        width="stretch"
     )
 
 else:
