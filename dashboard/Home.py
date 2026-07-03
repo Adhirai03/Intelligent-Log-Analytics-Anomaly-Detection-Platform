@@ -16,7 +16,7 @@ def local_css(file_name):
 # Load the CSS file
 local_css("dashboard/style.css")
 
-st.title("🔍 Intelligent Log Analytics & Anomaly Detection Platform")
+st.title("Intelligent Log Analytics & Anomaly Detection Platform")
 st.markdown("##### AI-powered execution tracing, early incident detection, and actionable root-cause insights.")
 
 # Initialize the global session state key if it doesn't exist yet
@@ -31,7 +31,7 @@ st.markdown("### 📥 Ingest Log Sheet")
 if st.session_state["uploaded_file"] is not None:
     df = st.session_state["uploaded_file"]
     file_name = st.session_state["file_name"]
-    st.success(f"📊 **Active Session Log Loaded '{file_name}':** Metrics and previews are preserved across pages ({len(df)} records active).")
+    st.success(f"**Active Session Log Loaded '{file_name}':** Metrics and previews are preserved across pages ({len(df)} records active).")
     
     # Allow operators to clear the session state to process a brand new log sheet
     if st.button("🔄 Clear Cache & Upload New Log"):
@@ -145,7 +145,7 @@ if st.session_state["uploaded_file"] is not None:
 
 else:
     # Baseline visual state layout when no log sheet has been supplied yet
-    st.info("ℹ️ Awaiting HDFS execution logs. Please drag and drop a log tracing file above to run diagnostic analytics.")
+    st.info(" Awaiting HDFS execution logs. Please drag and drop a log tracing file above to run diagnostic analytics.")
 
 st.sidebar.title("Project Information")
 
