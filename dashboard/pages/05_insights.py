@@ -10,56 +10,59 @@ from explainability.shap_analysis import (
 from insights.recommendations import build_ai_insight
 
 st.title("Actionable Insights")
+if st.session_state["uploaded_file"] is not None:
+    df = st.session_state["uploaded_file"]
+    row = st.number_input(
+        "Execution Trace",
+        0,
+        575061,
+        15
+    )
 
-row = st.number_input(
-    "Execution Trace",
-    0,
-    575061,
-    15
-)
+    prediction = predict_row(row)
 
-prediction = predict_row(row)
+    confidence = prediction_probability(row)
 
-confidence = prediction_probability(row)
+    st.metric(
+        "Prediction",
+        prediction
+    )
 
-st.metric(
-    "Prediction",
-    prediction
-)
+    st.metric(
+        "Confidence",
+        f"{confidence}%"
+    )
 
-st.metric(
-    "Confidence",
-    f"{confidence}%"
-)
+    st.divider()
 
-st.divider()
+    st.subheader("Model Explanation")
 
-st.subheader("Model Explanation")
+    st.write(generate_explanation(row))
 
-st.write(generate_explanation(row))
+    fig = feature_importance_plot(row)
 
-fig = feature_importance_plot(row)
+    st.plotly_chart(fig, use_container_width=True)
 
-st.plotly_chart(fig, use_container_width=True)
+    st.divider()
 
-st.divider()
+    report = build_ai_insight(row)
 
-report = build_ai_insight(row)
+    st.subheader("Risk Level")
 
-st.subheader("Risk Level")
+    st.error(report["risk"])
 
-st.error(report["risk"])
+    st.subheader("Detected Events")
 
-st.subheader("Detected Events")
+    for item in report["events"]:
 
-for item in report["events"]:
+        with st.expander(item["title"]):
 
-    with st.expander(item["title"]):
+            st.write("Cause")
 
-        st.write("Cause")
+            st.info(item["cause"])
 
-        st.info(item["cause"])
+            st.write("Recommendation")
 
-        st.write("Recommendation")
-
-        st.success(item["recommendation"])
+            st.success(item["recommendation"])
+else:
+    st.warning("⚠️ No data found. Please go to the **'Home'** page and upload a file first.   ")
