@@ -12,7 +12,7 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 
 @st.cache_data(show_spinner=False)
 def load_trace_data():
-    return pd.read_csv(ROOT_DIR / "HDFS_v1" / "data" / "Event_traces.csv")
+    return pd.read_csv(ROOT_DIR / "data" / "Event_traces.csv")
 
 
 @st.cache_resource(show_spinner=False)
@@ -116,7 +116,7 @@ def show_block_analysis():
     # -------------------------
 
     st.header("📊 Event Summary")
-
+    counter = Counter()
     if not trace_row.empty:
 
         events = trace_row["Features"].iloc[0]
