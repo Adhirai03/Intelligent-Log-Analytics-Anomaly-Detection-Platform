@@ -16,8 +16,17 @@ def local_css(file_name):
 # Load the CSS file
 local_css("dashboard/style.css")
 
-st.title("Intelligent Log Analytics & Anomaly Detection Platform")
-st.markdown("##### AI-powered execution tracing, early incident detection, and actionable root-cause insights.")
+st.markdown("""
+<div class="hero">
+    <div>
+        <h1> Intelligent Log Analytics Platform</h1>
+        <p>
+            AI-powered execution tracing • Real-time anomaly detection •
+            Root Cause Analysis • Predictive Monitoring
+        </p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # Initialize the global session state key if it doesn't exist yet
 if "uploaded_file" not in st.session_state:
@@ -77,66 +86,23 @@ if st.session_state["uploaded_file"] is not None:
     st.markdown("")
 
     # Create your 4 structural columns
-    col1, col2, col3, col4 = st.columns(4)
+    c1, c2, c3, c4 = st.columns(4)
 
-    card_style = """
-        background-color: #1A1F2C; 
-        border: 1px solid #2E374A; 
-        border-radius: 8px; 
-        padding: 20px; 
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-        text-align: center;
-    """
+    cards=[
+        ("📋 Total Logs",Total_logs,"#3b82f6","#ffffff"),
+        ("✅ Normal",Normal,"#22c55e","#ffffff"),
+        ("🚨 Anomalies",Anomalies,"#f59e0b","#f59e0b"),
+        ("⚠️ Rate",f"{Anomaly_rate}%","#ef4444","#ef4444")
+    ]
 
-    # Column 1: Total Logs
-    with col1:
-        st.markdown(
-            f"""
-            <div style="{card_style}">
-                <p style="color: #94A3B8; font-size: 1rem; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">📋 Total Logs</p>
-                <p style="color: #FFFFFF; font-size: 2rem; font-weight: 700; margin: 10px 0 0 0;">{Total_logs:,}</p>
+    for col,(t,v,b,c) in zip([c1,c2,c3,c4],cards):  
+        with col:
+            st.markdown(f'''
+            <div class="metric-card" style="border-left-color:{b}">
+            <div class="metric-title">{t}</div>
+            <div class="metric-value" style="color:{c}">{v}</div>
             </div>
-            """, 
-            unsafe_allow_html=True
-        )
-
-    # Column 2: Normal Logs
-    with col2:
-        st.markdown(
-            f"""
-            <div style="{card_style}">
-                <p style="color: #94A3B8; font-size: 1rem; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">✅ Normal Logs</p>
-                <p style="color: #34D399; font-size: 2rem; font-weight: 700; margin: 10px 0 0 0;">{Normal:,}</p>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
-
-    # Column 3: Anomalies
-    with col3:
-        alert_card_style = card_style + "background-color: #251E2A; border-color: #531f1f;"
-        st.markdown(
-            f"""
-            <div style="{alert_card_style}">
-                <p style="color: #FCA5A5; font-size: 1rem; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">🚨 Anomalies</p>
-                <p style="color: #F87171; font-size: 2rem; font-weight: 700; margin: 10px 0 0 0;">{Anomalies:,}</p>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
-
-    # Column 4: Anomaly Rate
-    with col4:
-        alert_card_style = card_style + "background-color: #251E2A; border-color: #EF3333;"
-        st.markdown(
-            f"""
-            <div style="{alert_card_style}">
-                <p style="color: #FCA5A5; font-size: 1rem; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">⚠️ Anomaly Rate</p>
-                <p style="color: #EF4444; font-size: 2rem; font-weight: 700; margin: 10px 0 0 0;">{Anomaly_rate}%</p>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
+            ''',unsafe_allow_html=True)
     st.markdown("")
 
     # Expandable layout to preview raw text configurations before triggering AI pipeline
