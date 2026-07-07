@@ -8,6 +8,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 
 st.title("🔍 Anomaly Detection")
 
+<<<<<<< HEAD
 if st.session_state.get("uploaded_file") is not None:
     df = st.session_state["uploaded_file"]
 
@@ -72,6 +73,71 @@ if st.session_state.get("uploaded_file") is not None:
 
         actual_label = row["Label"].iloc[0]
 
+=======
+if st.session_state["uploaded_file"] is not None:
+    df = st.session_state["uploaded_file"]
+    # df = load_data(ROOT_DIR / "data" / "Event_occurrence_matrix.csv")
+
+    # Load model lazily after a Block ID is selected to avoid crashing the
+    # page if the model file is missing or corrupted.
+
+    features = [f"E{i}" for i in range(1,30)]
+
+    st.subheader("Select a Log Record")
+
+    # Ensure BlockId options are strings and remove NaNs/duplicates
+    block_options = (
+        df["BlockId"]
+        .dropna()
+        .astype(str)
+        .unique()
+    )
+
+    block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
+
+    if not block_ids:
+        st.error("No block IDs are available in the uploaded dataset.")
+        st.stop()
+
+    search_query = st.text_input(
+        "Search Block ID",
+        value="",
+        placeholder="Type part of a Block ID",
+        help="Use this to quickly find a block when the list is large."
+    )
+
+    filtered_block_ids = [
+        block_id for block_id in block_ids
+        if search_query.lower() in block_id.lower()
+    ] if search_query else block_ids
+
+    if not filtered_block_ids:
+        st.warning("No matching Block IDs found. Try a different search term.")
+        st.stop()
+
+    selected_block = st.selectbox(
+        "Choose a Block ID",
+        block_options
+    )
+
+    # Compare as strings to match the selectbox options
+    row = df[df["BlockId"].astype(str) == str(selected_block)]
+
+    # Lazy-load model now that a selection exists
+    model = None
+    try:
+        model = joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
+    except Exception as e:
+        st.warning(f"Model could not be loaded: {e}")
+        # Allow the page to continue and show predicted info only if model loads
+
+    if not row.empty:
+
+        st.success("Block Found")
+
+        actual_label = row["Label"].iloc[0]
+
+>>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9
         st.write("Actual Label:", actual_label)
 
 
@@ -134,9 +200,18 @@ if st.session_state.get("uploaded_file") is not None:
             row[features].T,
             width="stretch"
         )
+<<<<<<< HEAD
 
     else:
         st.error("Block ID not found")
+=======
+>>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9
 
+    else:
+        st.error("Block ID not found")
 else:
+<<<<<<< HEAD
     st.warning("⚠️ No data found. Please go to the **Home** page and upload a file first.   ")
+=======
+    st.warning("⚠️ No data found. Please go to the **'Home'** page and upload a file first.   ")
+>>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9

@@ -3,7 +3,7 @@
 primaryColor = "#EF4444" 
 
 # Background color for the main content areas
-backgroundColor = "#010a20"
+backgroundColor = "#0f172a"
 
 # Background color for the sidebar and drop-down cards
 secondaryBackgroundColor = "#1A1F2C"
