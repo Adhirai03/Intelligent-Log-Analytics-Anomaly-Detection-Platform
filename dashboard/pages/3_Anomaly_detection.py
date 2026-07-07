@@ -1,217 +1,151 @@
 import streamlit as st
-import pandas as pd
 import joblib
 from pathlib import Path
-from utils.log_analysis import load_data
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
 st.title("🔍 Anomaly Detection")
 
-<<<<<<< HEAD
-if st.session_state.get("uploaded_file") is not None:
-    df = st.session_state["uploaded_file"]
-
-    df = load_data(ROOT_DIR / "HDFS_v1" / "data" / "Event_occurrence_matrix.csv")
-
-    # Load model lazily after a Block ID is selected to avoid crashing the
-    # page if the model file is missing or corrupted.
-
-    features = [f"E{i}" for i in range(1,30)]
-
-    st.subheader("Select a Log Record")
-
-    # Ensure BlockId options are strings and remove NaNs/duplicates
-    block_options = (
-        df["BlockId"]
-        .dropna()
-        .astype(str)
-        .unique()
+# -------------------------------
+# Check if data is available
+# -------------------------------
+if st.session_state.get("uploaded_file") is None:
+    st.warning(
+        "⚠️ No data found. Please go to the **Home** page and upload a file first."
     )
+    st.stop()
 
-    block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
+# Use uploaded dataset
+df = st.session_state["uploaded_file"]
 
-    if not block_ids:
-        st.error("No block IDs are available in the uploaded dataset.")
-        st.stop()
+# -------------------------------
+# Feature Columns
+# -------------------------------
+features = [f"E{i}" for i in range(1, 30)]
 
-    search_query = st.text_input(
-        "Search Block ID",
-        value="",
-        placeholder="Type part of a Block ID",
-        help="Use this to quickly find a block when the list is large."
-    )
+# Verify required columns exist
+missing_cols = [col for col in features if col not in df.columns]
 
-    filtered_block_ids = [
-        block_id for block_id in block_ids
-        if search_query.lower() in block_id.lower()
-    ] if search_query else block_ids
+if missing_cols:
+    st.error(f"Dataset is missing required columns: {missing_cols}")
+    st.stop()
 
-    if not filtered_block_ids:
-        st.warning("No matching Block IDs found. Try a different search term.")
-        st.stop()
+# -------------------------------
+# Block Selection
+# -------------------------------
+st.subheader("Select a Log Record")
 
-    selected_block = st.selectbox(
-        "Choose a Block ID",
-        block_options
-    )
+block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
 
-    # Compare as strings to match the selectbox options
-    row = df[df["BlockId"].astype(str) == str(selected_block)]
+if not block_ids:
+    st.error("No Block IDs found in the uploaded dataset.")
+    st.stop()
 
-    # Lazy-load model now that a selection exists
-    model = None
-    try:
-        model = joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
-    except Exception as e:
-        st.warning(f"Model could not be loaded: {e}")
-        # Allow the page to continue and show predicted info only if model loads
+search_query = st.text_input(
+    "Search Block ID",
+    placeholder="Type part of a Block ID"
+)
 
-    if not row.empty:
+filtered_block_ids = [
+    block_id
+    for block_id in block_ids
+    if search_query.lower() in block_id.lower()
+]
 
-        st.success("Block Found")
+if not filtered_block_ids:
+    st.warning("No matching Block IDs found.")
+    st.stop()
 
-        actual_label = row["Label"].iloc[0]
+selected_block = st.selectbox(
+    "Choose a Block ID",
+    filtered_block_ids
+)
 
-=======
-if st.session_state["uploaded_file"] is not None:
-    df = st.session_state["uploaded_file"]
-    # df = load_data(ROOT_DIR / "data" / "Event_occurrence_matrix.csv")
+# -------------------------------
+# Selected Row
+# -------------------------------
+row = df[df["BlockId"].astype(str) == selected_block]
 
-    # Load model lazily after a Block ID is selected to avoid crashing the
-    # page if the model file is missing or corrupted.
+if row.empty:
+    st.error("Block ID not found.")
+    st.stop()
 
-    features = [f"E{i}" for i in range(1,30)]
+st.success("✅ Block Found")
 
-    st.subheader("Select a Log Record")
+# -------------------------------
+# Actual Label
+# -------------------------------
+actual_label = row["Label"].iloc[0]
+st.write("### Actual Label")
+st.write(actual_label)
 
-    # Ensure BlockId options are strings and remove NaNs/duplicates
-    block_options = (
-        df["BlockId"]
-        .dropna()
-        .astype(str)
-        .unique()
-    )
+# -------------------------------
+# Load Model
+# -------------------------------
+try:
+    model = joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
+except Exception as e:
+    st.error(f"Unable to load model.\n\n{e}")
+    st.stop()
 
-    block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
+# -------------------------------
+# Prediction
+# -------------------------------
+prediction = model.predict(row[features])[0]
+probability = model.predict_proba(row[features])[0]
 
-    if not block_ids:
-        st.error("No block IDs are available in the uploaded dataset.")
-        st.stop()
+anomaly_confidence = probability[1] * 100
 
-    search_query = st.text_input(
-        "Search Block ID",
-        value="",
-        placeholder="Type part of a Block ID",
-        help="Use this to quickly find a block when the list is large."
-    )
+predicted_label = "Anomaly" if prediction == 1 else "Normal"
 
-    filtered_block_ids = [
-        block_id for block_id in block_ids
-        if search_query.lower() in block_id.lower()
-    ] if search_query else block_ids
+st.write("### Predicted Label")
+st.write(predicted_label)
 
-    if not filtered_block_ids:
-        st.warning("No matching Block IDs found. Try a different search term.")
-        st.stop()
+# -------------------------------
+# Confidence
+# -------------------------------
+st.subheader("Prediction Confidence")
 
-    selected_block = st.selectbox(
-        "Choose a Block ID",
-        block_options
-    )
+st.progress(float(anomaly_confidence / 100))
 
-    # Compare as strings to match the selectbox options
-    row = df[df["BlockId"].astype(str) == str(selected_block)]
+st.write(f"Anomaly Probability: **{anomaly_confidence:.2f}%**")
 
-    # Lazy-load model now that a selection exists
-    model = None
-    try:
-        model = joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
-    except Exception as e:
-        st.warning(f"Model could not be loaded: {e}")
-        # Allow the page to continue and show predicted info only if model loads
-
-    if not row.empty:
-
-        st.success("Block Found")
-
-        actual_label = row["Label"].iloc[0]
-
->>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9
-        st.write("Actual Label:", actual_label)
-
-
-        if model is not None:
-            prediction = model.predict(row[features])[0]
-
-            probability = model.predict_proba(row[features])[0]
-
-            anomaly_confidence = probability[1] * 100
-
-            pred_label = (
-                "Anomaly"
-                if prediction == 1
-                else "Normal"
-            )
-
-            st.write("Predicted Label:", pred_label)
-
-            # Confidence
-            st.subheader("Prediction Confidence")
-
-            st.progress(anomaly_confidence / 100)
-
-            st.write(
-                f"Anomaly Probability: {anomaly_confidence:.2f}%"
-            )
-        else:
-            st.info("Model not available — predictions are disabled.")
-        # Severity (only shown when model available)
-        if model is not None:
-            if anomaly_confidence >= 80:
-                severity = "🔴 High"
-            elif anomaly_confidence >= 50:
-                severity = "🟡 Medium"
-            else:
-                severity = "🟢 Low"
-
-            st.write("Severity Level:", severity)
-
-        # Top Events
-        st.subheader("Top Event Occurrences")
-
-        event_values = row[features].T
-        event_values.columns = ["Count"]
-
-        event_values = event_values.sort_values(
-            by="Count",
-            ascending=False
-        )
-
-        st.dataframe(
-            event_values.head(10),
-            width="stretch"
-        )
-
-        # Complete Pattern
-        st.subheader("Complete Event Pattern")
-
-        st.dataframe(
-            row[features].T,
-            width="stretch"
-        )
-<<<<<<< HEAD
-
-    else:
-        st.error("Block ID not found")
-=======
->>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9
-
-    else:
-        st.error("Block ID not found")
+# -------------------------------
+# Severity
+# -------------------------------
+if anomaly_confidence >= 80:
+    severity = "🔴 High"
+elif anomaly_confidence >= 50:
+    severity = "🟡 Medium"
 else:
-<<<<<<< HEAD
-    st.warning("⚠️ No data found. Please go to the **Home** page and upload a file first.   ")
-=======
-    st.warning("⚠️ No data found. Please go to the **'Home'** page and upload a file first.   ")
->>>>>>> a7bf430c3d3c33d4e58df4a264ca9a5b54976ee9
+    severity = "🟢 Low"
+
+st.write("### Severity Level")
+st.write(severity)
+
+# -------------------------------
+# Top Event Occurrences
+# -------------------------------
+st.subheader("Top Event Occurrences")
+
+event_values = (
+    row[features]
+    .T
+    .rename(columns={row.index[0]: "Count"})
+    .sort_values(by="Count", ascending=False)
+)
+
+st.dataframe(
+    event_values.head(10),
+    width="stretch"
+)
+
+# -------------------------------
+# Complete Event Pattern
+# -------------------------------
+st.subheader("Complete Event Pattern")
+
+st.dataframe(
+    row[features].T,
+    width="stretch"
+)
