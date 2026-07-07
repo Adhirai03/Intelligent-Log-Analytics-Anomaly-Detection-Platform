@@ -1,0 +1,94 @@
+.stApp{
+    background:#0f172a;
+    color:#F8FAFC;
+}
+
+.alert-hero{
+    background:linear-gradient(135deg,#9b0f0f,#893e3e);
+    border-radius:20px;
+    padding: 10px;
+    margin-bottom:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,.35);
+}
+
+.alert-hero h1{
+    color:white;
+    margin:0;
+    font-size:2rem;
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+
+.alert-hero p{
+    color:#FECACA;
+    margin-top:8px;
+}
+
+.metric-card{
+    background:#1E293B;
+    border-left:6px solid #EF4444;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+    transition:.25s;
+    margin-bottom: 10px;
+}
+
+.metric-card:hover{
+    transform:scale(1.02);
+}
+
+.metric-title{
+    color:#94A3B8;
+    font-size:.9rem;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.metric-value{
+    color:white;
+    font-size:2.2rem;
+    font-weight:700;
+    margin-top:10px;
+}
+
+.stDownloadButton>button{
+    width:100%;
+    background:#2563EB;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:12px;
+    font-weight:600;
+}
+
+.stDownloadButton>button:hover{
+    background:#1D4ED8;
+}
+
+.st-emotion-cache-16n0ond{
+    background:#172033;
+    border-radius:18px;
+    padding:20px;
+    border:1px solid #243347;
+    margin:20px 0;
+    /* box-shadow:0 10px 25px rgba(0,0,0,.3); */
+}
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#111827;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#2563EB;
+    border-radius:20px;
+}
+
+thead tr th{
+    background:#1E293B;
+    color:white;
+}

@@ -10,11 +10,19 @@ from utils.log_analysis import (
     get_top_events
 )
 
-st.markdown('<link rel="stylesheet" href="dashboard/css/log_overview.css">', unsafe_allow_html=True)
+def local_css(file_name):
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        pass # Handle case if style.css isn't present during testing
+
+# Load the CSS file
+local_css("dashboard/css/log_overview.css")
 
 def card(title, value, color):
     st.markdown(f"""
-    <div class="ov-card" style="border-top:4px solid {color}">
+    <div class="ov-card" style="border-top:5px solid {color}">
         <div class="ov-title">{title}</div>
         <div class="ov-value" style="color:{color}">{value}</div>
     </div>
@@ -48,55 +56,55 @@ if st.session_state["uploaded_file"] is not None:
     with c4: card("⚠ Failure %", f"{rate}%", "#f59e0b")
     
     # Success vs Fail
-    st.subheader("Success vs Fail Distribution")
+    
 
     sf = get_success_fail_counts(df)
 
     left,right = st.columns(2)
 
     with left:
-        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
-        fig = px.pie(values=sf.values,names=sf.index,hole=.55,
-                    color=sf.index,
-                    color_discrete_sequence=["#22c55e","#ef4444"])
-        fig.update_layout(template="plotly_dark",paper_bgcolor="#162032",plot_bgcolor="#162032",
-                        margin=dict(l=20,r=20,t=40,b=20),title="Success vs Failure")
-        st.plotly_chart(fig,use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.subheader("Success vs Fail Distribution")
+        with st.container(border=False):
+            fig = px.pie(values=sf.values,names=sf.index,hole=.55,color=sf.index,color_discrete_sequence=["#22c55e","#ef4444"])
+            fig.update_layout(template="plotly_dark",paper_bgcolor="#162032",plot_bgcolor="#162032",margin=dict(l=20,r=20,t=40,b=20))
+            st.plotly_chart(fig,use_container_width=True)
 
     with right:
-        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+        st.subheader("Failure Type Distribution")
         ft = get_failure_type_distribution(df)
-        fig2 = px.bar(x=ft.index,y=ft.values,text=ft.values)
+        fig2 = px.bar(x=ft.index,y=ft.values,text=ft.values,labels={"x": "Failure Type","y": "Frequency"})
         fig2.update_traces(marker_color="#60a5fa")
-        fig2.update_layout(template="plotly_dark",paper_bgcolor="#162032",plot_bgcolor="#162032",
-                        title="Failure Type Distribution")
+        fig2.update_layout(template="plotly_dark",paper_bgcolor="#162032",plot_bgcolor="#162032")
         st.plotly_chart(fig2,use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
     # Top Events
-    st.subheader("Top Event Templates")
-    st.markdown('<div class="chart-card">', unsafe_allow_html=True)
-    te = get_top_events(df)
+    with st.container(border=False):
+        st.subheader("Top Event Templates")
+        te = get_top_events(df)
 
-    fig3 = px.bar(
-        x=te.values,
-        y=te.index,
-        labels={
-            "x": "Occurrences",
-            "y": "Event"
-        },
-        title="Most Frequent Events",
-        orientation="h"
-    )
-    fig3.update_yaxes(autorange="reversed")
+        fig3 = px.bar(
+            x=te.values,
+            y=te.index,
+            labels={
+                "x": "Occurrences",
+                "y": "Event"
+            },
+            title="Most Frequent Events",
+            orientation="h",
+            color=te.values,
+            color_continuous_scale="Blues"
+        )
+        fig3.update_yaxes(autorange="reversed")
+        fig3.update_coloraxes(
+            cmin=0,
+            cmax=3500   # Lower than the actual max value
+        )
 
-    st.plotly_chart(
-        fig3,
-        use_container_width=True
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.plotly_chart(
+            fig3,
+            use_container_width=True
+        )
 
     st.subheader("Event Frequency Table")
     st.dataframe(te.reset_index().rename(columns={"index":"Event",0:"Occurrences"}),
