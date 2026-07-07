@@ -108,7 +108,6 @@ if st.session_state.get("uploaded_file") is not None:
         # Allow the page to continue and show predicted info only if model loads
 
     if not row.empty:
-    if not row.empty:
 
         st.success("Block Found")
         st.success("Block Found")
