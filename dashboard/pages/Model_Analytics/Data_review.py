@@ -3,9 +3,16 @@ import pandas as pd
 import plotly.express as px
 
 def show_upload():
+    st.write("Upload the HDFS Event Occurrence Matrix dataset to begin the analysis.")
 
-    if st.session_state["uploaded_file"] is not None:
-        df = st.session_state["uploaded_file"]
+    uploaded_file = st.file_uploader(
+        "Upload Event_occurrence_matrix.csv",
+        type=["csv"]
+    )
+
+    if uploaded_file is not None:
+        # Load data and save it globally across tabs
+        df = pd.read_csv(uploaded_file)
         st.session_state["df"] = df
         st.success("Dataset uploaded successfully! Go to the 'Block Analysis' tab to explore.")
 

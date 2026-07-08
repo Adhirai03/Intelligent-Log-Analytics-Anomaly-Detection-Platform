@@ -1,5 +1,12 @@
 streamlit
 plotly
+<<<<<<< HEAD
 joblib
 scikit-learn
 pandas
+=======
+shap
+scikit-learn
+joblib
+reportlab
+>>>>>>> adhirai-feature
