@@ -240,6 +240,7 @@ def show_block_analysis():
         width="stretch"
     )
 
+
     # -------------------------
     # Model Explanation Match
     # -------------------------
