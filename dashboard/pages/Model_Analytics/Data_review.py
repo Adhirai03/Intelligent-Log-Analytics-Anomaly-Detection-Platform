@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-def show_upload():
+def show_review():
 
-    if st.session_state["uploaded_file"] is not None:
+    if st.session_state.get("uploaded_file") is not None:
         df = st.session_state["uploaded_file"]
         st.session_state["df"] = df
         st.success("Dataset uploaded successfully! Go to the 'Block Analysis' tab to explore.")

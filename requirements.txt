@@ -1,2 +1,6 @@
 streamlit
 plotly
+shap
+scikit-learn
+joblib
+reportlab

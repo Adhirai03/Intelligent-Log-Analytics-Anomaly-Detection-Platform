@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
-st.title("🔍 Anomaly Detection")
+st.title("📍 Anomaly Detection")
 
 # -------------------------------
 # Check if data is available
