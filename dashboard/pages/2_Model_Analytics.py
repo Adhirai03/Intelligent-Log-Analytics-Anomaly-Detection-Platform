@@ -1,9 +1,7 @@
 import streamlit as st
-
 from dashboard.pages.Model_Analytics.Data_review import show_review
 from dashboard.pages.Model_Analytics.Block_Analysis import show_block_analysis
 from dashboard.pages.Model_Analytics.Report_generator import show_report
-
 
 st.header("🎯 Model Analytics")
 

@@ -1,0 +1,74 @@
+.stApp{
+   background:#0f172a;
+   color:#F8FAFC;
+}
+
+.anomaly-hero{
+   background:linear-gradient(135deg,#2563EB,#0edee9);
+   padding:28px;
+   border-radius:18px;
+   margin-bottom:22px;
+   box-shadow:0 15px 30px rgba(0,0,0,.35);
+}
+
+.anomaly-hero h1{
+   color:#fff;
+   margin:0;
+   font-size:2rem;
+   padding: 0px;
+}
+
+.anomaly-hero p{
+   color:#D6E9FF;
+   margin-top:8px;
+   margin-bottom: 0px;
+}
+
+.metric-card{
+   background:#172033;
+   border-radius:18px;
+   padding:20px;
+   border-left:5px solid #3B82F6;
+   box-shadow:0 10px 25px rgba(0,0,0,.30);
+   transition:.25s;
+}
+
+.metric-card:hover{
+   transform:translateY(-5px);
+   box-shadow:0 18px 35px rgba(0,0,0,.40);
+}
+
+.metric-title{
+   color:#94A3B8;
+   font-size:.9rem;
+   text-transform:uppercase;
+   letter-spacing:.4px;
+}
+
+.metric-value{
+   color:#fff;
+   font-size:2rem;
+   font-weight:700;
+   margin-top:10px;
+}
+
+.metric-card.severity{
+    padding: 0px;
+    margin-top: 30px;
+}
+
+.metric-title.sev_title{
+    padding-left: 22px;
+    padding-top: 7px;
+}
+
+.metric-value.sev_value{
+    padding-left: 20px;
+    font-size: 1.7rem;
+}
+
+[data-testid="stDataFrame"]{
+   border-radius:16px;
+   overflow:hidden;
+   border:1px solid #25334A;
+}

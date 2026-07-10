@@ -7,9 +7,8 @@ def local_css(file_name):
         with open(file_name) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
-        pass # Handle case if style.css isn't present during testing
+        pass
 
-# Load the CSS file
 local_css("dashboard/css/alert.css")
 
 st.markdown("""
@@ -23,17 +22,15 @@ if st.session_state["uploaded_file"] is not None:
     df = st.session_state["uploaded_file"]
 
     alerts = df[df["Label"] == "Fail"]
-
     total = len(df)
     total_alerts = len(alerts)
     rate = round((total_alerts / total) * 100, 2) if total else 0
 
     c1, c2, c3 = st.columns(3)
-
     cards = [
-        ("🚨 Total Alerts", total_alerts, "#EF4444"),
-        ("📊 Alert Rate", f"{rate}%", "#F59E0B"),
-        ("🟢 Healthy Logs", total-total_alerts, "#22C55E")
+        ("Total Alerts", total_alerts, "#EF4444"),
+        ("Alert Rate", f"{rate}%", "#F59E0B"),
+        ("Healthy Logs", total-total_alerts, "#22C55E")
     ]
 
     for col, (title, value, color) in zip([c1,c2,c3], cards):
@@ -46,6 +43,7 @@ if st.session_state["uploaded_file"] is not None:
             ''', unsafe_allow_html=True)
 
     with st.container(border=False):
+        st.markdown("")
         st.subheader("Failure Type Distribution")
 
         type_counts = (
