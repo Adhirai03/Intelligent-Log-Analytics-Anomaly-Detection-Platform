@@ -11,11 +11,7 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 def load_model():
     return joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
 
-
 def show_block_analysis():
-    # -------------------------
-    # Load Data & Model
-    # -------------------------
     df = st.session_state.get("uploaded_file")
 
     if df is None or df.empty:
@@ -25,11 +21,6 @@ def show_block_analysis():
     model = load_model()
 
     features = [f"E{i}" for i in range(1, 30)]
-
-    # -------------------------
-    # UI
-    # -------------------------
-
     block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
 
     if not block_ids:
@@ -65,17 +56,13 @@ def show_block_analysis():
         st.warning("No data found for selected block")
         st.stop()
 
-    # -------------------------
     # Prediction
-    # -------------------------
     prediction = model.predict(occurrence_row[features])[0]
     probability = model.predict_proba(occurrence_row[features])[0]
     confidence = probability[prediction] * 100
     predicted_label = "Fail" if prediction == 1 else "Success"
 
-    # -------------------------
     # Feature Importance (GLOBAL)
-    # -------------------------
     importance_df = pd.DataFrame({
         "Feature": features,
         "Importance": model.feature_importances_
@@ -89,21 +76,16 @@ def show_block_analysis():
     st.session_state.predicted_label = predicted_label
     st.session_state.confidence = confidence
     st.session_state.top10 = top10
-
-
     st.success("Analysis Completed")
 
     c1, c2, c3 = st.columns(3)
-
     c1.metric("Actual Label", occurrence_row["Label"].iloc[0])
     c2.metric("Predicted Label", predicted_label)
     c3.metric("Confidence", f"{confidence:.2f}%")
 
     st.markdown("---")
 
-    # -------------------------
     # Feature Importance (GLOBAL)
-    # -------------------------
     st.header("Feature Analysis")
 
     importance_df = pd.DataFrame({
@@ -117,17 +99,13 @@ def show_block_analysis():
     st.plotly_chart(fig, width="stretch")
 
     st.dataframe(top10, width="stretch")
-
     st.markdown("---")
 
-    # -------------------------
     # Selected Block Events
-    # -------------------------
     st.header("Block Event Analysis")
 
     selected_events = occurrence_row[features].T
     selected_events.columns = ["Occurrence"]
-
     selected_events = selected_events[selected_events["Occurrence"] > 0]
     selected_events = selected_events.sort_values(
         by="Occurrence",
@@ -166,22 +144,17 @@ def show_block_analysis():
 
     st.markdown("---")
 
-    # -------------------------
     # Model Explanation Match
-    # -------------------------
     st.header("Model Decision Explanation")
 
     top_model_features = set(importance_df.head(10)["Feature"])
     block_features = set(selected_events.index)
-
     matching = list(block_features.intersection(top_model_features))
 
     if matching:
-
         st.success("The Random Forest model predicted this block as anomalous because:")
 
         for event in matching:
-
             imp = importance_df.loc[
                 importance_df["Feature"]==event,
                 "Importance"
@@ -194,7 +167,6 @@ def show_block_analysis():
             )
 
     else:
-
         st.warning("No highly important events were detected in this block.")
 
     st.markdown("---")

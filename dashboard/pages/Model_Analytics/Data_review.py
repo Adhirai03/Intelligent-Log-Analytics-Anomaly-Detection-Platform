@@ -3,17 +3,13 @@ import pandas as pd
 import plotly.express as px
 
 def show_review():
-    
-    # Get dataframe from session state
     df = st.session_state.get("uploaded_file")
 
     if df is None:
         st.warning("No dataset uploaded.")
         return
 
-    # ---------------------------------------------------
     # Dataset Summary
-    # ---------------------------------------------------
     st.header("📊 Dataset Summary")
 
     total_blocks = len(df)
@@ -29,14 +25,10 @@ def show_review():
 
     st.markdown("---")
 
-    # ---------------------------------------------------
     # Success vs Failure Graph
-    # ---------------------------------------------------
-
     st.header("🔥 Event Occurrence Heatmap")
 
     features = [f"E{i}" for i in range(1, 30)]
-
     failure_df = df[df["Label"] == "Fail"]
 
     heatmap_data = (
@@ -61,9 +53,7 @@ def show_review():
 
     st.plotly_chart(fig, width="stretch")
 
-    # ---------------------------------------------------
     # Failure Type Analysis
-    # ---------------------------------------------------
     st.header("Failure Type Analysis")
     if "Type" in df.columns:
         failure_df = df[df["Label"] == "Fail"]
@@ -78,8 +68,6 @@ def show_review():
 
     st.markdown("---")
 
-    # ---------------------------------------------------
     # Dataset Preview
-    # ---------------------------------------------------
     st.header("📋 Dataset Preview")
     st.dataframe(df.head(20), width="stretch")

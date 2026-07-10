@@ -15,7 +15,6 @@ explainer = shap.TreeExplainer(model)
 
 # Internal helper
 def _get_single_row_shap(row):
-
     values = explainer.shap_values(row)
 
     # SHAP >= 0.45 returns (samples, features, classes)
@@ -27,9 +26,7 @@ def _get_single_row_shap(row):
 
 # Top Features
 def get_top_features(row_index=0, top_n=5):
-
     row = X.iloc[[row_index]]
-
     values = _get_single_row_shap(row)
 
     importance = pd.DataFrame({
@@ -46,7 +43,6 @@ def get_top_features(row_index=0, top_n=5):
 
 # Plot
 def feature_importance_plot(row_index=0):
-
     top = get_top_features(row_index)
 
     fig = px.bar(
@@ -54,7 +50,7 @@ def feature_importance_plot(row_index=0):
         x="Importance",
         y="Feature",
         orientation="h",
-        title="Top Features Influencing Prediction"
+        title="Top Events Influencing Prediction"
     )
 
     fig.update_layout(
@@ -66,7 +62,6 @@ def feature_importance_plot(row_index=0):
 
 # Explanation
 def generate_explanation(row_index=0):
-
     top = get_top_features(row_index)
 
     f1 = top.iloc[0]["Feature"]
@@ -83,25 +78,17 @@ training, making this execution appear suspicious.
 
 # Prediction
 def predict_row(row_index=0):
-
     row = X.iloc[[row_index]]
-
     pred = model.predict(row)[0]
-
     return "Anomaly" if pred else "Normal"
 
 # Confidence
 def prediction_probability(row_index=0):
-
     row = X.iloc[[row_index]]
-
     prob = model.predict_proba(row)[0]
-
     return round(max(prob) * 100, 2)
 
 # Raw SHAP values
 def get_shap_values(row_index=0):
-
     row = X.iloc[[row_index]]
-
     return _get_single_row_shap(row)

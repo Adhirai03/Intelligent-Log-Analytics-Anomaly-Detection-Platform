@@ -11,9 +11,8 @@ def local_css(file_name):
         with open(file_name) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
-        pass # Handle case if style.css isn't present during testing
+        pass
 
-# Load the CSS file
 local_css("dashboard/style.css")
 
 st.markdown("""
@@ -42,12 +41,11 @@ if st.session_state["uploaded_file"] is not None:
     file_name = st.session_state["file_name"]
     st.success(f"**Active Session Log Loaded '{file_name}':** Metrics and previews are preserved across pages ({len(df)} records active).")
     
-    # Allow operators to clear the session state to process a brand new log sheet
     if st.button("🔄 Clear Cache & Upload New Log"):
         st.session_state["uploaded_file"] = None
         st.rerun()
 
-# State 2: No file is active in memory; prompt the user to upload one
+# State 2: No file is active in memory;
 else:
     uploaded_file = st.file_uploader(
         "Drag and drop your raw HDFS execution logs in .csv or .xlsx format.", 
@@ -57,15 +55,12 @@ else:
 
     if uploaded_file is not None:
         try:
-            # Load file into memory
             if uploaded_file.name.endswith('.csv'):
                 df = pd.read_csv(uploaded_file)
             else:
                 df = pd.read_excel(uploaded_file)
                 
             df.index = df.index + 1
-            
-            # Save data frame globally so ALL sibling pages can access it instantly
             st.session_state["uploaded_file"] = df
             st.session_state["file_name"] = uploaded_file.name
             st.toast(f"Successfully loaded {uploaded_file.name}!", icon="🚀")
@@ -74,10 +69,9 @@ else:
         except Exception as e:
             st.error(f"An unexpected data format error occurred during sheet parsing: {e}")
 
-# Render metrics and previews if df exists in local memory (works for both initial upload and returning page switches)
+# Render metrics and previews if df exists in local memory
 if st.session_state["uploaded_file"] is not None:
     df = st.session_state["uploaded_file"]
-    
     Total_logs = len(df)
     Anomalies = len(df[df["Label"] == "Fail"]) if "Label" in df.columns else 0
     Normal = len(df[df["Label"] == "Success"]) if "Label" in df.columns else 0
@@ -85,14 +79,12 @@ if st.session_state["uploaded_file"] is not None:
 
     st.markdown("")
 
-    # Create your 4 structural columns
     c1, c2, c3, c4 = st.columns(4)
-
     cards=[
-        ("📋 Total Logs",Total_logs,"#3b82f6","#ffffff"),
-        ("✅ Normal",Normal,"#22c55e","#ffffff"),
-        ("🚨 Anomalies",Anomalies,"#f59e0b","#f59e0b"),
-        ("⚠️ Rate",f"{Anomaly_rate}%","#ef4444","#ef4444")
+        ("Total Logs",Total_logs,"#3b82f6","#ffffff"),
+        ("Normal Logs",Normal,"#22c55e","#ffffff"),
+        ("Anomalies",Anomalies,"#f59e0b","#f59e0b"),
+        ("Rate",f"{Anomaly_rate}%","#ef4444","#ef4444")
     ]
 
     for col,(t,v,b,c) in zip([c1,c2,c3,c4],cards):  
@@ -105,16 +97,14 @@ if st.session_state["uploaded_file"] is not None:
             ''',unsafe_allow_html=True)
     st.markdown("")
 
-    # Expandable layout to preview raw text configurations before triggering AI pipeline
+    # Expandable layout to preview raw text configurations
     with st.expander("👀 View Raw Ingested Log Preview (First 10 Rows)"):
         st.dataframe(df.head(10), use_container_width=True)
 
 else:
-    # Baseline visual state layout when no log sheet has been supplied yet
     st.info(" Awaiting HDFS execution logs. Please drag and drop a log tracing file above to run diagnostic analytics.")
 
 st.sidebar.title("Project Information")
-
 st.sidebar.info("""
 Intelligent Log Analytics &
 Anomaly Detection Platform

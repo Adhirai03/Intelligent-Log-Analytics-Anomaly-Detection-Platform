@@ -1,0 +1,94 @@
+.stApp{
+    background:#0f172a;
+    color:#F8FAFC
+}
+
+.insight-hero{
+    background:linear-gradient(135deg,#2563EB,#08b2a4);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:24px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35)
+}
+
+.insight-hero h1{
+    color:#fff;
+    margin:0;
+    font-size:2rem;
+    padding: 10px 
+}
+
+.insight-hero p{
+    color:#DBEAFE;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.metric-card{
+    background:#1E293B;
+    border-left:5px solid #3B82F6;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.3)
+}
+
+.metric-title{
+    color:#94A3B8;
+    text-transform:uppercase;
+    font-size:.85rem;
+    letter-spacing:.5px
+}
+
+.metric-value{
+    color:#fff;
+    font-size:2rem;
+    font-weight:700;
+    margin-top:10px
+}
+
+.js-plotly-plot{
+    border-radius:16px
+}
+
+.risk-low{
+    background:#14532D;
+    color:#DCFCE7;
+    border-left:6px solid #22C55E;
+    padding:16px;
+    border-radius:14px
+}
+
+.risk-medium{
+    background:#78350F;
+    color:#FEF3C7;
+    border-left:6px solid #F59E0B;
+    padding:16px;
+    border-radius:14px
+}
+
+.risk-high,.risk-critical{
+    background:#4C1D1D;
+    color:#FECACA;
+    border-left:6px solid #EF4444;
+    padding:16px;
+    border-radius:14px
+}
+
+.st-emotion-cache-f8bz6f{
+    padding-top: 0px;
+}
+
+.st-emotion-cache-19ysvjp{
+    background:#172033;
+    border:1px solid #263244;
+    border-radius:18px;
+    padding:20px;
+    margin:18px 0;
+    box-shadow:0 10px 25px rgba(0,0,0,.28);
+    transition:.25s;
+}
+
+.st-emotion-cache-19ysvjp:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 35px rgba(0,0,0,.35)
+}
