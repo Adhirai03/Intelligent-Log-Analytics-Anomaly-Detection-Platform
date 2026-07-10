@@ -4,7 +4,7 @@ import plotly.express as px
 
 def show_review():
     
-        # Get dataframe from session state
+    # Get dataframe from session state
     df = st.session_state.get("uploaded_file")
 
     if df is None:

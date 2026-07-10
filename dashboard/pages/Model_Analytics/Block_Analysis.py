@@ -2,18 +2,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 import plotly.express as px
-import plotly.graph_objects as go
 from pathlib import Path
 from dashboard.pages.Model_Analytics.Report_generator import show_report
-from collections import Counter
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
-
-
-@st.cache_data(show_spinner=False)
-def load_trace_data():
-    return pd.read_csv(ROOT_DIR / "data" / "Event_traces.csv")
-
 
 @st.cache_resource(show_spinner=False)
 def load_model():
@@ -24,13 +16,12 @@ def show_block_analysis():
     # -------------------------
     # Load Data & Model
     # -------------------------
-    df = st.session_state.get("df")
+    df = st.session_state.get("uploaded_file")
 
     if df is None or df.empty:
         st.warning("Please upload dataset first in Upload tab")
         st.stop()
 
-    trace_df = load_trace_data()
     model = load_model()
 
     features = [f"E{i}" for i in range(1, 30)]
@@ -69,7 +60,6 @@ def show_block_analysis():
     )
 
     occurrence_row = df[df["BlockId"].astype(str) == selected_block]
-    trace_row = trace_df[trace_df["BlockId"].astype(str) == selected_block]
 
     if occurrence_row.empty:
         st.warning("No data found for selected block")
@@ -112,74 +102,6 @@ def show_block_analysis():
     st.markdown("---")
 
     # -------------------------
-    # Block Details
-    # -------------------------
-
-    st.header("📊 Event Summary")
-    counter = Counter()
-    if not trace_row.empty:
-
-        events = trace_row["Features"].iloc[0]
-        events = events.strip("[]").split(",")
-
-        counter = Counter(events)
-
-        most_event = counter.most_common(1)[0][0]
-
-        latency = trace_row["Latency"].iloc[0]
-
-        c1, c2, c3, c4, c5 = st.columns(5)
-
-        c1.metric("Total Events", len(events))
-        c2.metric("Unique Events", len(counter))
-        c3.metric("Most Frequent", most_event)
-        c4.metric("Latency (ms)", latency)
-        c5.metric("Failure Type", occurrence_row["Type"].iloc[0])
-
-        st.markdown("---")
-
-        # Event Timeline
-
-        st.subheader("Event Timeline")
-
-        timeline = " ➜ ".join(events[:30])
-
-        st.info(timeline)
-
-        if len(events) > 30:
-            st.caption("Showing first 30 events")
-
-        st.markdown("---")
-
-        # Latency Gauge
-
-        st.subheader("⚡ Latency Analysis")
-
-        fig = go.Figure(go.Indicator(
-
-            mode="gauge+number",
-
-            value=float(latency),
-
-            title={"text":"Latency (ms)"},
-
-            gauge={
-                "axis":{"range":[0,5000]},
-                "bar":{"color":"red"},
-                "steps":[
-                    {"range":[0,1500],"color":"lightgreen"},
-                    {"range":[1500,3000],"color":"yellow"},
-                    {"range":[3000,5000],"color":"salmon"}
-                ]
-            }
-
-        ))
-
-        st.plotly_chart(fig, use_container_width=True)
-
-    st.markdown("---")
-
-    # -------------------------
     # Feature Importance (GLOBAL)
     # -------------------------
     st.header("Feature Analysis")
@@ -195,6 +117,8 @@ def show_block_analysis():
     st.plotly_chart(fig, width="stretch")
 
     st.dataframe(top10, width="stretch")
+
+    st.markdown("---")
 
     # -------------------------
     # Selected Block Events
@@ -239,6 +163,8 @@ def show_block_analysis():
         selected_events,
         width="stretch"
     )
+
+    st.markdown("---")
 
     # -------------------------
     # Model Explanation Match
