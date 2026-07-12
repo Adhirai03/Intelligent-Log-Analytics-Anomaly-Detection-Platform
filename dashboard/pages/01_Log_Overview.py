@@ -17,6 +17,7 @@ def local_css(file_name):
     except FileNotFoundError:
         pass 
 
+local_css("dashboard/style.css")
 local_css("dashboard/css/log_overview.css")
 
 def card(title, value, color):
@@ -42,6 +43,30 @@ if st.session_state["uploaded_file"] is not None:
     success = int(sf.get("Success",0))
     fail = int(sf.get("Fail",0))
     rate = round(fail/total*100,2) if total else 0
+
+    # Summary Metrics
+
+    st.markdown("")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    cards = [
+        ("Total Logs", total, "#3b82f6", "#ffffff"),
+        ("Normal Logs", success, "#22c55e", "#ffffff"),
+        ("Anomalies", fail, "#f59e0b", "#f59e0b"),
+        ("Rate", f"{rate}%", "#ef4444", "#ef4444")
+    ]
+
+    for col, (t, v, b, c) in zip([c1, c2, c3, c4], cards):
+        with col:
+            st.markdown(f"""
+            <div class="metric-card" style="border-left-color:{b}">
+                <div class="metric-title">{t}</div>
+                <div class="metric-value" style="color:{c}">{v}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("")
 
     # Success vs Fail
     sf = get_success_fail_counts(df)
