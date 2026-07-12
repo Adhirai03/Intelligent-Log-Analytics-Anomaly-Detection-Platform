@@ -11,7 +11,11 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 def load_model():
     return joblib.load(ROOT_DIR / "saved_models" / "random_forest.pkl")
 
+
 def show_block_analysis():
+    # -------------------------
+    # Load Data & Model
+    # -------------------------
     df = st.session_state.get("uploaded_file")
 
     if df is None or df.empty:
@@ -21,35 +25,39 @@ def show_block_analysis():
     model = load_model()
 
     features = [f"E{i}" for i in range(1, 30)]
+
+    # -------------------------
+    # UI
+    # -------------------------
+
     block_ids = sorted(df["BlockId"].dropna().astype(str).unique())
 
     if not block_ids:
         st.error("No block IDs are available in the uploaded dataset.")
         st.stop()
 
-    left,right = st.columns([2,1])
-
-    with left:
-        search_query = st.text_input(
-            "Search Block ID",
-            placeholder="Enter part of Block ID..."
-        )
+    search_query = st.text_input(
+        "Search Block ID",
+        value="",
+        placeholder="Type part of a Block ID",
+        help="Use this to quickly find a block when the list is large."
+    )
 
     filtered_block_ids = [
-        block_id
-        for block_id in block_ids
+        block_id for block_id in block_ids
         if search_query.lower() in block_id.lower()
-    ]
+    ] if search_query else block_ids
 
     if not filtered_block_ids:
-        st.warning("No matching Block IDs found.")
+        st.warning("No matching Block IDs found. Try a different search term.")
         st.stop()
 
-    with right:
-        selected_block = st.selectbox(
-            "Choose Block",
-            filtered_block_ids
-        )
+    selected_block = st.selectbox(
+        "Select Block ID",
+        filtered_block_ids,
+        index=0,
+        key="block_selector"
+    )
 
     occurrence_row = df[df["BlockId"].astype(str) == selected_block]
 
@@ -57,13 +65,17 @@ def show_block_analysis():
         st.warning("No data found for selected block")
         st.stop()
 
+    # -------------------------
     # Prediction
+    # -------------------------
     prediction = model.predict(occurrence_row[features])[0]
     probability = model.predict_proba(occurrence_row[features])[0]
     confidence = probability[prediction] * 100
     predicted_label = "Fail" if prediction == 1 else "Success"
 
+    # -------------------------
     # Feature Importance (GLOBAL)
+    # -------------------------
     importance_df = pd.DataFrame({
         "Feature": features,
         "Importance": model.feature_importances_
@@ -77,58 +89,67 @@ def show_block_analysis():
     st.session_state.predicted_label = predicted_label
     st.session_state.confidence = confidence
     st.session_state.top10 = top10
+
+
     st.success("Analysis Completed")
 
     c1, c2, c3 = st.columns(3)
-    cards = [
-        ("Actual Label", occurrence_row["Label"].iloc[0],
-        "#22C55E" if str(occurrence_row["Label"].iloc[0]).lower()=="success" else "#EF4444"),
-        ("Predicted Label", predicted_label,
-        "#EF4444" if predicted_label=="Anomaly" else "#22C55E"),
-        ("Confidence", f"{confidence:.2f}%", "#F59E0B"),
-    ]
 
-    for col,(title,value,color) in zip([c1,c2,c3],cards):
-        with col:
-            st.markdown(f'''
-            <div class="metric-card" style="border-left-color:{color}">
-            <div class="metric-title">{title}</div>
-            <div class="metric-value" style="color:{color}">{value}</div>
-            </div>
-            ''', unsafe_allow_html=True)
+    c1.metric("Actual Label", occurrence_row["Label"].iloc[0])
+    c2.metric("Predicted Label", predicted_label)
+    c3.metric("Confidence", f"{confidence:.2f}%")
 
     st.markdown("---")
 
+    # -------------------------
     # Feature Importance (GLOBAL)
-    st.subheader("Feature Analysis")
+    # -------------------------
+    st.header("Feature Analysis")
 
     importance_df = pd.DataFrame({
         "Feature": features,
         "Importance": model.feature_importances_
     }).sort_values(by="Importance", ascending=False)
 
-    top10 = importance_df.head(10)
+    top10 = importance_df.head(10).copy()
+    # Round importance to 4 decimal places so graph values are clean
+    top10["Importance"] = top10["Importance"].round(4)
+    top10["ImportanceRounded"] = top10["Importance"].apply(lambda x: f"{x:.4f}")
 
-    fig = px.bar(
-        top10,
-        x="Feature",
-        y="Importance",
-        text="Importance"
+    fig = px.bar(top10, x="Feature", y="Importance", text="ImportanceRounded")
+    fig.update_traces(
+        texttemplate="%{text}",
+        textposition="outside",
+        textfont_size=12,
+        cliponaxis=False
     )
     fig.update_layout(
-        paper_bgcolor="#1B2231",
-        plot_bgcolor="#1B2231",
+        xaxis_tickangle=-45,
+        uniformtext_minsize=10,
+        uniformtext_mode="hide",
+        margin=dict(l=40, r=20, t=40, b=80),
+        yaxis=dict(
+            tickformat=".4f",
+            dtick=0.01
+        )
     )
-    st.plotly_chart(fig, width="stretch")
 
-    st.dataframe(top10, width="stretch")
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Display clean table with only Feature and rounded Importance
+    display_df = top10[["Feature", "Importance"]].reset_index(drop=True)
+    st.dataframe(display_df, use_container_width=True)
+
     st.markdown("---")
 
+    # -------------------------
     # Selected Block Events
-    st.subheader("Block Event Analysis")
+    # -------------------------
+    st.header("Block Event Analysis")
 
     selected_events = occurrence_row[features].T
     selected_events.columns = ["Occurrence"]
+
     selected_events = selected_events[selected_events["Occurrence"] > 0]
     selected_events = selected_events.sort_values(
         by="Occurrence",
@@ -155,9 +176,7 @@ def show_block_analysis():
     fig_events.update_layout(
         xaxis_title="Events",
         yaxis_title="Occurrence Count",
-        hovermode="x unified",
-        paper_bgcolor="#1B2231",
-        plot_bgcolor="#1B2231",
+        hovermode="x unified"
     )
 
     st.plotly_chart(fig_events, width="stretch")
@@ -169,17 +188,22 @@ def show_block_analysis():
 
     st.markdown("---")
 
+    # -------------------------
     # Model Explanation Match
-    st.subheader("Model Decision Explanation")
+    # -------------------------
+    st.header("Model Decision Explanation")
 
     top_model_features = set(importance_df.head(10)["Feature"])
     block_features = set(selected_events.index)
+
     matching = list(block_features.intersection(top_model_features))
 
     if matching:
+
         st.success("The Random Forest model predicted this block as anomalous because:")
 
         for event in matching:
+
             imp = importance_df.loc[
                 importance_df["Feature"]==event,
                 "Importance"
@@ -192,6 +216,7 @@ def show_block_analysis():
             )
 
     else:
+
         st.warning("No highly important events were detected in this block.")
 
     st.markdown("---")
