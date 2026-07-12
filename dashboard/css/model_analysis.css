@@ -1,0 +1,118 @@
+.stApp{
+    background:#0f172a;
+    color:#F8FAFC;
+}
+
+.model-hero{
+    background:linear-gradient(135deg,#2563EB,#199a86);
+    padding:28px;
+    border-radius:18px;
+    margin-bottom:25px;
+    box-shadow:0 15px 30px rgba(0,0,0,.35);
+}
+
+.model-hero h1{
+    color:#fff;
+    margin:0;
+    font-size:2rem;
+    padding: 0px;
+}
+
+.model-hero p{
+    color:#DBEAFE;
+    margin-top:8px;
+    margin-bottom: 0px;
+}
+
+.st-emotion-cache-ch07fk{
+    background:#172033;
+    border-radius:18px;
+    border:1px solid #263244;
+    padding:22px;
+    margin:20px 0;
+    box-shadow:0 8px 20px rgba(0,0,0,.28);
+}
+
+.stButton>button{
+    width:100%;
+    background:#2563EB;
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+}
+
+.stButton>button:hover{
+    background:#1D4ED8;
+}
+
+.stDownloadButton>button{
+    width:100%;
+    background:#16A34A;
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+}
+
+.stDownloadButton>button:hover{
+    background:#15803D;
+}
+
+.metric-card{
+   background:#172033;
+   border-radius:18px;
+   padding:20px;
+   border-left:5px solid #3B82F6;
+   box-shadow:0 10px 25px rgba(0,0,0,.30);
+   transition:.25s;
+}
+
+.metric-card:hover{
+   transform:translateY(-5px);
+   box-shadow:0 18px 35px rgba(0,0,0,.40);
+}
+
+.metric-title{
+   color:#94A3B8;
+   font-size:.9rem;
+   text-transform:uppercase;
+   letter-spacing:.4px;
+}
+
+.metric-value{
+   color:#fff;
+   font-size:2rem;
+   font-weight:700;
+   margin-top:10px;
+}
+
+button[data-baseweb='tab']{
+    background:#172033;
+    color:#CBD5E1;
+    border-radius:10px 10px 0 0;
+    border:none;
+    padding:12px 20px;
+    font-weight:600;
+}
+
+button[data-baseweb='tab']:hover{
+    background:#1E293B;
+    color:#fff;
+}
+
+button[data-baseweb='tab'][aria-selected='true']{
+    background:#2563EB;
+    color:#fff;
+}
+
+.st-emotion-cache-16n0ond{
+    border: solid 5px #334155;
+    border-radius: 18px;
+}
+
+[data-testid="stDataFrame"]{
+    border-radius:15px;
+    overflow:hidden;
+    border:1px solid #273449;
+}

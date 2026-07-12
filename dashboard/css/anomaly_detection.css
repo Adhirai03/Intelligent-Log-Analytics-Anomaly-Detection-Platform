@@ -53,18 +53,18 @@
 }
 
 .metric-card.severity{
-    padding: 0px;
-    margin-top: 30px;
+   padding: 0px;
+   margin-top: 30px;
 }
 
 .metric-title.sev_title{
-    padding-left: 22px;
-    padding-top: 7px;
+   padding-left: 22px;
+   padding-top: 7px;
 }
 
 .metric-value.sev_value{
-    padding-left: 20px;
-    font-size: 1.7rem;
+   padding-left: 20px;
+   font-size: 1.7rem;
 }
 
 [data-testid="stDataFrame"]{

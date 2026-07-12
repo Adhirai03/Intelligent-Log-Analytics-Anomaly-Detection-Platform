@@ -29,7 +29,7 @@ def card(title, value, color):
 
 st.markdown("""
 <div class="overview-banner">
-<h1>📊 Log Overview Dashboard</h1>
+<h1>Log Overview Dashboard</h1>
 <p>Summary of uploaded logs and anomaly distribution</p>
 </div>
 """, unsafe_allow_html=True)
@@ -74,9 +74,11 @@ if st.session_state["uploaded_file"] is not None:
             labels={
                 "x": "Failure Type",
                 "y": "Frequency"
-            }
+            },
+            color=ft.values,
+            color_continuous_scale="Reds"
         )
-        fig2.update_traces(marker_color="#60a5fa")
+        # fig2.update_traces(marker_color="#60a5fa")
         fig2.update_layout(
             template="plotly_dark",
             paper_bgcolor="#162032",

@@ -41,7 +41,7 @@ if st.session_state["uploaded_file"] is not None:
     file_name = st.session_state["file_name"]
     st.success(f"**Active Session Log Loaded '{file_name}':** Metrics and previews are preserved across pages ({len(df)} records active).")
     
-    if st.button("🔄 Clear Cache & Upload New Log"):
+    if st.button("Clear Cache & Upload New Log"):
         st.session_state["uploaded_file"] = None
         st.rerun()
 
@@ -98,7 +98,7 @@ if st.session_state["uploaded_file"] is not None:
     st.markdown("")
 
     # Expandable layout to preview raw text configurations
-    with st.expander("👀 View Raw Ingested Log Preview (First 10 Rows)"):
+    with st.expander("View Raw Ingested Log Preview (First 10 Rows)"):
         st.dataframe(df.head(10), use_container_width=True)
 
 else:

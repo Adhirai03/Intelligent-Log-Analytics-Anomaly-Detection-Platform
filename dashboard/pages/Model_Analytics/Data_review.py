@@ -9,24 +9,10 @@ def show_review():
         st.warning("No dataset uploaded.")
         return
 
-    # Dataset Summary
-    st.header("📊 Dataset Summary")
-
-    total_blocks = len(df)
-    success_blocks = len(df[df["Label"] == "Success"])
-    failed_blocks = len(df[df["Label"] == "Fail"])
-    failure_percentage = (failed_blocks / total_blocks) * 100 if total_blocks > 0 else 0
-
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Blocks", total_blocks)
-    col2.metric("Success Blocks", success_blocks)
-    col3.metric("Failed Blocks", failed_blocks)
-    col4.metric("Failure %", f"{failure_percentage:.2f}%")
-
     st.markdown("---")
 
     # Success vs Failure Graph
-    st.header("🔥 Event Occurrence Heatmap")
+    st.subheader("Event Occurrence Heatmap")
 
     features = [f"E{i}" for i in range(1, 30)]
     failure_df = df[df["Label"] == "Fail"]
@@ -50,17 +36,34 @@ def show_review():
         color_continuous_scale="Reds",
         title="Failure Type vs Event Occurrence"
     )
+    fig.update_layout(
+        paper_bgcolor="#1B2231",
+        plot_bgcolor="#1B2231",
+    )
+    with st.container(border=False):
+        st.plotly_chart(fig, width="stretch")
 
-    st.plotly_chart(fig, width="stretch")
+    st.divider()
 
     # Failure Type Analysis
-    st.header("Failure Type Analysis")
+    st.subheader("Failure Type Analysis")
     if "Type" in df.columns:
         failure_df = df[df["Label"] == "Fail"]
         failure_count = failure_df["Type"].value_counts().reset_index()
         failure_count.columns = ["Failure Type", "Count"]
+        failure_count.index += 1
 
-        fig_failure = px.bar(failure_count, x="Failure Type", y="Count", text="Count", title="Failure Type Distribution")
+        fig_failure = px.bar(
+            failure_count,
+            x="Failure Type",
+            y="Count",
+            text="Count",
+            title="Failure Type Distribution"
+        )
+        fig_failure.update_layout(
+            paper_bgcolor="#1B2231",
+            plot_bgcolor="#1B2231",
+        )
         st.plotly_chart(fig_failure, width="stretch")
         st.dataframe(failure_count, width="stretch")
     else:
@@ -69,5 +72,5 @@ def show_review():
     st.markdown("---")
 
     # Dataset Preview
-    st.header("📋 Dataset Preview")
+    st.subheader("📋 Dataset Preview")
     st.dataframe(df.head(20), width="stretch")

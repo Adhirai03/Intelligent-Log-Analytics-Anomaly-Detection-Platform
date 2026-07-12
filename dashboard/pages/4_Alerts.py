@@ -13,7 +13,7 @@ local_css("dashboard/css/alert.css")
 
 st.markdown("""
 <div class="alert-hero">
-    <h1>🚨 Alerts & Failures Dashboard</h1>
+    <h1>Alerts & Failures Dashboard</h1>
     <p>Monitor anomalies, investigate failure patterns, and export alert reports.</p>
 </div>
 """, unsafe_allow_html=True)

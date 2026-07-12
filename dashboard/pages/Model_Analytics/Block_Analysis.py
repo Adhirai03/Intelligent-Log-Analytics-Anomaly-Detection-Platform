@@ -27,28 +27,29 @@ def show_block_analysis():
         st.error("No block IDs are available in the uploaded dataset.")
         st.stop()
 
-    search_query = st.text_input(
-        "Search Block ID",
-        value="",
-        placeholder="Type part of a Block ID",
-        help="Use this to quickly find a block when the list is large."
-    )
+    left,right = st.columns([2,1])
+
+    with left:
+        search_query = st.text_input(
+            "Search Block ID",
+            placeholder="Enter part of Block ID..."
+        )
 
     filtered_block_ids = [
-        block_id for block_id in block_ids
+        block_id
+        for block_id in block_ids
         if search_query.lower() in block_id.lower()
-    ] if search_query else block_ids
+    ]
 
     if not filtered_block_ids:
-        st.warning("No matching Block IDs found. Try a different search term.")
+        st.warning("No matching Block IDs found.")
         st.stop()
 
-    selected_block = st.selectbox(
-        "Select Block ID",
-        filtered_block_ids,
-        index=0,
-        key="block_selector"
-    )
+    with right:
+        selected_block = st.selectbox(
+            "Choose Block",
+            filtered_block_ids
+        )
 
     occurrence_row = df[df["BlockId"].astype(str) == selected_block]
 
@@ -79,14 +80,27 @@ def show_block_analysis():
     st.success("Analysis Completed")
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Actual Label", occurrence_row["Label"].iloc[0])
-    c2.metric("Predicted Label", predicted_label)
-    c3.metric("Confidence", f"{confidence:.2f}%")
+    cards = [
+        ("Actual Label", occurrence_row["Label"].iloc[0],
+        "#22C55E" if str(occurrence_row["Label"].iloc[0]).lower()=="success" else "#EF4444"),
+        ("Predicted Label", predicted_label,
+        "#EF4444" if predicted_label=="Anomaly" else "#22C55E"),
+        ("Confidence", f"{confidence:.2f}%", "#F59E0B"),
+    ]
+
+    for col,(title,value,color) in zip([c1,c2,c3],cards):
+        with col:
+            st.markdown(f'''
+            <div class="metric-card" style="border-left-color:{color}">
+            <div class="metric-title">{title}</div>
+            <div class="metric-value" style="color:{color}">{value}</div>
+            </div>
+            ''', unsafe_allow_html=True)
 
     st.markdown("---")
 
     # Feature Importance (GLOBAL)
-    st.header("Feature Analysis")
+    st.subheader("Feature Analysis")
 
     importance_df = pd.DataFrame({
         "Feature": features,
@@ -95,14 +109,23 @@ def show_block_analysis():
 
     top10 = importance_df.head(10)
 
-    fig = px.bar(top10, x="Feature", y="Importance", text="Importance")
+    fig = px.bar(
+        top10,
+        x="Feature",
+        y="Importance",
+        text="Importance"
+    )
+    fig.update_layout(
+        paper_bgcolor="#1B2231",
+        plot_bgcolor="#1B2231",
+    )
     st.plotly_chart(fig, width="stretch")
 
     st.dataframe(top10, width="stretch")
     st.markdown("---")
 
     # Selected Block Events
-    st.header("Block Event Analysis")
+    st.subheader("Block Event Analysis")
 
     selected_events = occurrence_row[features].T
     selected_events.columns = ["Occurrence"]
@@ -132,7 +155,9 @@ def show_block_analysis():
     fig_events.update_layout(
         xaxis_title="Events",
         yaxis_title="Occurrence Count",
-        hovermode="x unified"
+        hovermode="x unified",
+        paper_bgcolor="#1B2231",
+        plot_bgcolor="#1B2231",
     )
 
     st.plotly_chart(fig_events, width="stretch")
@@ -145,7 +170,7 @@ def show_block_analysis():
     st.markdown("---")
 
     # Model Explanation Match
-    st.header("Model Decision Explanation")
+    st.subheader("Model Decision Explanation")
 
     top_model_features = set(importance_df.head(10)["Feature"])
     block_features = set(selected_events.index)
