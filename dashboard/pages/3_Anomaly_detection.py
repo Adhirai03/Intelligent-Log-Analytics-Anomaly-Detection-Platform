@@ -15,7 +15,7 @@ local_css("dashboard/css/anomaly_detection.css")
 
 st.markdown("""
 <div class="anomaly-hero">
-    <h1>🔍 AI Anomaly Detection</h1>
+    <h1>AI Anomaly Detection</h1>
     <p>
         Detect anomalous HDFS execution traces using the trained
         Random Forest model and visualize execution behaviour.

@@ -18,8 +18,8 @@ local_css("dashboard/css/insight.css")
 
 st.markdown("""
 <div class="insight-hero">
-    <h1> AI Actionable Insights</h1>
-    <p>Explainable AI • Root Cause Analysis • Smart Recommendations</p>
+    <h1>Actionable Insights</h1>
+    <p>Model Explanation • Root Cause Analysis • Smart Recommendations</p>
 </div>
 """, unsafe_allow_html=True)
 
