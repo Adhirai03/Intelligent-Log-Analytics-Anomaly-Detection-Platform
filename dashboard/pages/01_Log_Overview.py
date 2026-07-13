@@ -1,13 +1,15 @@
 import streamlit as st
 import plotly.express as px
 from pathlib import Path
+import pandas as pd 
 
 from utils.log_analysis import (
     load_data,
     get_total_logs,
     get_success_fail_counts,
     get_failure_type_distribution,
-    get_top_events
+    get_top_events,
+    get_anomaly_associated_events
 )
 
 def local_css(file_name):
@@ -17,16 +19,8 @@ def local_css(file_name):
     except FileNotFoundError:
         pass 
 
-local_css("dashboard/style.css")
 local_css("dashboard/css/log_overview.css")
-
-def card(title, value, color):
-    st.markdown(f"""
-    <div class="ov-card" style="border-top:5px solid {color}">
-        <div class="ov-title">{title}</div>
-        <div class="ov-value" style="color:{color}">{value}</div>
-    </div>
-    """, unsafe_allow_html=True)
+templates = load_data( "data/HDFS.log_templates.csv" )
 
 st.markdown("""
 <div class="overview-banner">
@@ -90,26 +84,36 @@ if st.session_state["uploaded_file"] is not None:
             st.plotly_chart(fig,use_container_width=True)
 
     with right:
-        st.subheader("Failure Type Distribution")
-        ft = get_failure_type_distribution(df)
-        fig2 = px.bar(
-            x=ft.index,
-            y=ft.values,
-            text=ft.values,
-            labels={
-                "x": "Failure Type",
-                "y": "Frequency"
-            },
-            color=ft.values,
-            color_continuous_scale="Reds"
+
+        st.subheader("Top Anomaly-Associated Events")
+
+        anomaly_events = get_anomaly_associated_events(df, templates)
+        anomaly_events["ShortEvent"] = anomaly_events["EventTemplate"].apply(lambda x: x[:45] + "..." if len(str(x)) > 45 else x)
+
+        fig = px.bar(
+            anomaly_events,
+            x="AnomalyScore",
+            y="EventId",
+            orientation="h",
+            text="Fail",
+            color="AnomalyScore",
+            color_continuous_scale="Reds",
+            hover_data=["ShortEvent","Success", "Fail"]
         )
-        # fig2.update_traces(marker_color="#60a5fa")
-        fig2.update_layout(
+
+        fig.update_layout(
             template="plotly_dark",
             paper_bgcolor="#162032",
-            plot_bgcolor="#162032"
+            plot_bgcolor="#162032",
+            margin=dict(l=20, r=20, t=40, b=20),
+            coloraxis_showscale=False
         )
-        st.plotly_chart(fig2,use_container_width=True)
+        fig.update_yaxes(autorange="reversed")
+        fig.update_traces(
+            textposition="outside"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
     # Top Events
     with st.container(border=False):
@@ -125,8 +129,9 @@ if st.session_state["uploaded_file"] is not None:
             },
             title="Most Frequent Events",
             orientation="h",
+            text=te.values,
             color=te.values,
-            color_continuous_scale="Blues"
+            color_continuous_scale="Blues",
         )
         fig3.update_yaxes(autorange="reversed")
         fig3.update_coloraxes(

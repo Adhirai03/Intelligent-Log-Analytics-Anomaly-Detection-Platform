@@ -40,6 +40,7 @@ def show_review():
         paper_bgcolor="#1B2231",
         plot_bgcolor="#1B2231",
     )
+    fig.update_yaxes(type="category")
     with st.container(border=False):
         st.plotly_chart(fig, width="stretch")
 
@@ -58,7 +59,9 @@ def show_review():
             x="Failure Type",
             y="Count",
             text="Count",
-            title="Failure Type Distribution"
+            title="Failure Type Distribution",
+            color="Count",
+            color_continuous_scale="Reds",
         )
         fig_failure.update_layout(
             paper_bgcolor="#1B2231",
