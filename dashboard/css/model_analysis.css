@@ -116,3 +116,74 @@ button[data-baseweb='tab'][aria-selected='true']{
     overflow:hidden;
     border:1px solid #273449;
 }
+
+.model-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#1B2231;
+    border:1px solid rgba(255,255,255,.08);
+    border-left:5px solid #3B82F6;
+    border-radius:16px;
+    padding:10px 28px;
+    margin:18px 0;
+    transition:.25s;
+    box-shadow:0 8px 20px rgba(0,0,0,.35);
+}
+
+.model-card:hover{
+    transform:translateY(-4px);
+}
+
+.model-left{
+    width:45%;
+}
+
+.model-right{
+    width:35%;
+}
+
+.event-title{
+    color:white;
+    font-size:30px;
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+.event-text{
+    color:#D1D5DB;
+    font-size:18px;
+    margin:10px 0;
+}
+
+.event-text b{
+    color:#60A5FA;
+    font-weight: 700;
+}
+
+.importance-label{
+    color:#AEB8C8;
+    font-size:18px;
+}
+
+.importance-value{
+    color:#4ADE80;
+    font-size:42px;
+    font-weight:700;
+    text-align:right;
+    margin-bottom:18px;
+}
+
+.progress{
+    width:100%;
+    height:14px;
+    border-radius:20px;
+    background:#2E3648;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#22C55E,#4ADE80);
+}

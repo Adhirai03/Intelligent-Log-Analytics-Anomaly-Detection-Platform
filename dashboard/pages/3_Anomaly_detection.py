@@ -155,8 +155,10 @@ event_values = (
     .reset_index()
 )
 event_values.columns=["Event", "Count"]
+event_values = event_values.query("Count > 0")
+
 st.dataframe(
-    event_values.head(10),
+    event_values.head(5),
     width="stretch",
     hide_index=True
 )
