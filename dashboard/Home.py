@@ -27,6 +27,31 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 250px; background-color: #1e293b; padding: 15px; border-radius: 10px; border-left: 4px solid #0ea5e9; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h4 style="margin: 0 0 8px 0; color: #38bdf8; font-size: 1rem;">🧊 Block & Block ID</h4>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin: 0; line-height: 1.4;">Large files are split into blocks. A <code>Block ID</code> tracks a single block's full lifecycle across multiple nodes.</p>
+    </div>
+    <div style="flex: 1; min-width: 250px; background-color: #1e293b; padding: 15px; border-radius: 10px; border-left: 4px solid #10b981; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h4 style="margin: 0 0 8px 0; color: #34d399; font-size: 1rem;">⚡ Event</h4>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin: 0; line-height: 1.4;">A distinct log action (e.g., <i>"Receiving block"</i>) parsed into a unique template ID (e.g., E1, E2).</p>
+    </div>
+    <div style="flex: 1; min-width: 250px; background-color: #1e293b; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h4 style="margin: 0 0 8px 0; color: #fbbf24; font-size: 1rem;">📈 Event Trace</h4>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin: 0; line-height: 1.4;">The timeline of events for a Block ID, analyzed to flag operations as <b>Normal</b> or <b>Anomaly</b>.</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+with st.expander("🔍 View Event Dictionary (Log Templates)"):
+    st.markdown("This table shows the exact log message template corresponding to each **Event ID** in our dataset.")
+    try:
+        templates_df = pd.read_csv("HDFS_v1/data/HDFS.log_templates.csv")
+        st.dataframe(templates_df, use_container_width=True, hide_index=True)
+    except Exception as e:
+        st.warning(f"Could not load event templates: {e}")
+
 # Initialize the global session state key if it doesn't exist yet
 if "uploaded_file" not in st.session_state:
     st.session_state["uploaded_file"] = None
