@@ -126,49 +126,6 @@ For every execution trace:
 This enables users to understand **why** the model predicted an anomaly rather than treating the model as a black box.
 
 ---
-# Project Preview:
-
-## Home
-
-![alt text](image.png)
-
----
-
-## Log Overview
-![alt text](image-1.png)
-![alt text](image-2.png)
-
----
-
-## Model Analytics
-
-![alt text](image-3.png)
-![alt text](image-4.png)
-![alt text](image-5.png)
-![alt text](image-6.png)
-![alt text](image-7.png)
-![alt text](image-8.png)
-![alt text](image-9.png)
----
-
-## Anomaly Detection
-
-![alt text](image-10.png)
-
----
-
-## Alerts Dashboard
-
-![alt text](image-11.png)
-![alt text](image-12.png)
----
-
-## Actionable Insights
-
-![alt text](image-13.png)
-![alt text](image-14.png)
----
-
 # Dashboard Overview
 
 ## Home
@@ -330,7 +287,7 @@ Due to GitHub file size limitations, the dataset is **not included** in this rep
 
 Download the dataset from:
 
-**https://github.com/logpai/loghub**(please download the first dataset in this repo)
+**https://github.com/logpai/loghub** (please download the first dataset in this repo)
 
 Place the following file inside the `data/` directory:
 
